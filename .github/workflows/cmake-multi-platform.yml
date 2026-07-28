@@ -1,18 +1,14 @@
 name: Multi-OS builds
-
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
 permissions:
   contents: write
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: false
       matrix:
@@ -43,89 +39,108 @@ jobs:
             c_compiler: gcc
           - os: macos-latest
             c_compiler: cl
-
+    outputs:
+      release_tag: ${{ steps.release_tag.outputs.tag }}
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Install System Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            libx11-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxi-dev \
+            wayland-scanner++ \
+            libwayland-dev \
+            libxkbcommon-dev \
+            xvfb
+      - name: Set reusable strings
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      - name: Set release tag
+        id: release_tag
+        shell: bash
+        run: |
+          echo "tag=nightly-$(date +'%Y%m%d')-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - name: Configure CMake
+        shell: bash
+        run: |
+          EXTRA_ARGS=""
+          cmake -B "${{ steps.strings.outputs.build-output-dir }}" \
+            -DCMAKE_CXX_COMPILER="${{ matrix.cpp_compiler }}" \
+            -DCMAKE_C_COMPILER="${{ matrix.c_compiler }}" \
+            -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}" \
+            $EXTRA_ARGS \
+            -S "${{ github.workspace }}"
+      - name: Build
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      - name: Test
+        working-directory: ${{ steps.strings.outputs.build-output-dir }}
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            xvfb-run ctest --build-config ${{ matrix.build_type }}
+          else
+            ctest --build-config ${{ matrix.build_type }}
+          fi
+      - name: Package Executables
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          mkdir -p dist
+          BUILD_DIR=$(echo "${{ steps.strings.outputs.build-output-dir }}" | tr '\\' '/')
+          
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
+          else
+            # Compatible with both GNU find (Linux) and BSD find (macOS)
+            find "$BUILD_DIR" -type f ! -path "*/CMakeFiles/*" -exec test -x {} \; -exec cp {} dist/ \;
+          fi
+          if [ -z "$(ls -A dist)" ]; then
+            echo "Error: No compiled executables were found in $BUILD_DIR"
+            exit 1
+          fi
+          ARCHIVE_NAME="aura-${{ matrix.os }}-${{ matrix.c_compiler }}"
+          python3 -c "import shutil; shutil.make_archive('$ARCHIVE_NAME', 'zip', 'dist')"
+          echo "ZIP_FILE=${ARCHIVE_NAME}.zip" >> "$GITHUB_ENV"
+      - name: Upload to Nightly Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_tag.outputs.tag }}
+          name: "Nightly Build ${{ steps.release_tag.outputs.tag }}"
+          body: "Automated rolling nightly build generated from commit ${{ github.sha }} on `main`."
+          prerelease: true
+          files: ${{ env.ZIP_FILE }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Install System Dependencies (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libgl1-mesa-dev \
-          libglu1-mesa-dev \
-          libx11-dev \
-          libxrandr-dev \
-          libxinerama-dev \
-          libxcursor-dev \
-          libxi-dev \
-          wayland-scanner++ \
-          libwayland-dev \
-          libxkbcommon-dev \
-          xvfb
+  cleanup:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Prune old nightly releases (keep latest 50)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO="${{ github.repository }}"
+          KEEP=50
 
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
-    - name: Configure CMake
-      shell: bash
-      run: |
-        EXTRA_ARGS=""
-
-        cmake -B "${{ steps.strings.outputs.build-output-dir }}" \
-          -DCMAKE_CXX_COMPILER="${{ matrix.cpp_compiler }}" \
-          -DCMAKE_C_COMPILER="${{ matrix.c_compiler }}" \
-          -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}" \
-          $EXTRA_ARGS \
-          -S "${{ github.workspace }}"
-
-    - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
-
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      shell: bash
-      run: |
-        if [ "${{ runner.os }}" = "Linux" ]; then
-          xvfb-run ctest --build-config ${{ matrix.build_type }}
-        else
-          ctest --build-config ${{ matrix.build_type }}
-        fi
-
-    - name: Package Executables
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      shell: bash
-      run: |
-        mkdir -p dist
-        BUILD_DIR=$(echo "${{ steps.strings.outputs.build-output-dir }}" | tr '\\' '/')
-        
-        if [ "${{ runner.os }}" = "Windows" ]; then
-          find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
-        else
-          # Compatible with both GNU find (Linux) and BSD find (macOS)
-          find "$BUILD_DIR" -type f ! -path "*/CMakeFiles/*" -exec test -x {} \; -exec cp {} dist/ \;
-        fi
-
-        if [ -z "$(ls -A dist)" ]; then
-          echo "Error: No compiled executables were found in $BUILD_DIR"
-          exit 1
-        fi
-
-        ARCHIVE_NAME="aura-${{ matrix.os }}-${{ matrix.c_compiler }}"
-        python3 -c "import shutil; shutil.make_archive('$ARCHIVE_NAME', 'zip', 'dist')"
-        echo "ZIP_FILE=${ARCHIVE_NAME}.zip" >> "$GITHUB_ENV"
-
-    - name: Upload to Nightly Release
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: nightly
-        name: "Nightly Build"
-        body: "Automated rolling nightly build generated from the latest `main` branch commit."
-        prerelease: true
-        files: ${{ env.ZIP_FILE }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # List nightly-tagged releases, filter to the nightly-* tag pattern,
+          # newest first, then delete everything past the newest $KEEP.
+          gh release list --repo "$REPO" --limit 1000 \
+            | awk -F'\t' '$3 ~ /^nightly-/ {print $3}' \
+            | sort -r \
+            | tail -n +$((KEEP + 1)) \
+            | while read -r tag; do
+                echo "Deleting old release: $tag"
+                gh release delete "$tag" --repo "$REPO" --yes --cleanup-tag
+              done
