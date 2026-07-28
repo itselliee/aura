@@ -39,6 +39,8 @@ jobs:
             c_compiler: gcc
           - os: macos-latest
             c_compiler: cl
+    outputs:
+      release_tag: ${{ steps.release_tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - name: Install System Dependencies (Linux)
@@ -62,6 +64,11 @@ jobs:
         shell: bash
         run: |
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      - name: Set release tag
+        id: release_tag
+        shell: bash
+        run: |
+          echo "tag=nightly-$(date +'%Y%m%d')-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
       - name: Configure CMake
         shell: bash
         run: |
@@ -100,16 +107,16 @@ jobs:
             echo "Error: No compiled executables were found in $BUILD_DIR"
             exit 1
           fi
-          ARCHIVE_NAME="aura-${{ matrix.os }}-${{ matrix.c_compiler }}-$(date +'%Y%m%d')-${GITHUB_SHA::7}"
+          ARCHIVE_NAME="aura-${{ matrix.os }}-${{ matrix.c_compiler }}"
           python3 -c "import shutil; shutil.make_archive('$ARCHIVE_NAME', 'zip', 'dist')"
           echo "ZIP_FILE=${ARCHIVE_NAME}.zip" >> "$GITHUB_ENV"
       - name: Upload to Nightly Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: nightly
-          name: "Nightly Build"
-          body: "Rolling catalogue of automated builds from `main`. Latest commit: ${{ github.sha }}."
+          tag_name: ${{ steps.release_tag.outputs.tag }}
+          name: "Nightly Build ${{ steps.release_tag.outputs.tag }}"
+          body: "Automated rolling nightly build generated from commit ${{ github.sha }} on `main`."
           prerelease: true
           files: ${{ env.ZIP_FILE }}
         env:
@@ -120,27 +127,20 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Prune old assets from the nightly release (keep newest 50 per build variant)
+      - name: Prune old nightly releases (keep latest 50)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO="${{ github.repository }}"
           KEEP=50
 
-          # All asset filenames currently attached to the single "nightly" release,
-          # e.g. aura-windows-latest-cl-20260728-a1b2c3d.zip
-          gh release view nightly --repo "$REPO" --json assets \
-            --jq '.assets[].name' > all_assets.txt
-
-          # Group by variant (strip the trailing -date-sha.zip), then within each
-          # variant keep the 50 most recent (names sort chronologically since the
-          # date is embedded) and delete the rest.
-          sed -E 's/-[0-9]{8}-[0-9a-f]{7}\.zip$//' all_assets.txt | sort -u | while read -r variant; do
-            grep "^${variant}-[0-9]\{8\}-[0-9a-f]\{7\}\.zip$" all_assets.txt \
-              | sort -r \
-              | tail -n +$((KEEP + 1)) \
-              | while read -r asset; do
-                  echo "Deleting old asset: $asset"
-                  gh release delete-asset nightly "$asset" --repo "$REPO" --yes
-                done
-          done
+          # List nightly-tagged releases, filter to the nightly-* tag pattern,
+          # newest first, then delete everything past the newest $KEEP.
+          gh release list --repo "$REPO" --limit 1000 \
+            | awk -F'\t' '$3 ~ /^nightly-/ {print $3}' \
+            | sort -r \
+            | tail -n +$((KEEP + 1)) \
+            | while read -r tag; do
+                echo "Deleting old release: $tag"
+                gh release delete "$tag" --repo "$REPO" --yes --cleanup-tag
+              done
