@@ -38,7 +38,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # --- NEW STEP: Install OpenGL & GLFW dependencies on Linux ---
     - name: Install System Dependencies (Linux)
       if: runner.os == 'Linux'
       run: |
@@ -54,6 +53,11 @@ jobs:
           libglfw3-dev \
           xvfb
 
+    # --- NEW STEP: Install GLFW on Windows using vcpkg ---
+    - name: Install Dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: vcpkg install glfw3:x64-windows
+
     - name: Set reusable strings
       id: strings
       shell: bash
@@ -61,12 +65,20 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
-      run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
+      shell: bash
+      run: |
+        # Use vcpkg toolchain only on Windows
+        EXTRA_ARGS=""
+        if [ "${{ runner.os }}" = "Windows" ]; then
+          EXTRA_ARGS="-DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        fi
+
+        cmake -B ${{ steps.strings.outputs.build-output-dir }} \
+          -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          $EXTRA_ARGS \
+          -S ${{ github.workspace }}
 
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
