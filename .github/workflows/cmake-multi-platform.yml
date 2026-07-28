@@ -38,6 +38,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # Install Linux Dependencies (OpenGL + GLFW + Virtual Display)
     - name: Install System Dependencies (Linux)
       if: runner.os == 'Linux'
       run: |
@@ -53,7 +54,7 @@ jobs:
           libglfw3-dev \
           xvfb
 
-    # --- NEW STEP: Install GLFW on Windows using vcpkg ---
+    # Install Windows Dependencies via vcpkg
     - name: Install Dependencies (Windows)
       if: runner.os == 'Windows'
       run: vcpkg install glfw3:x64-windows
@@ -79,7 +80,7 @@ jobs:
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      # Use xvfb-run on Linux so GLFW can create invisible test contexts without failing
+      shell: bash
       run: |
         if [ "${{ runner.os }}" = "Linux" ]; then
           xvfb-run ctest --build-config ${{ matrix.build_type }}
