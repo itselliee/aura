@@ -68,7 +68,7 @@ namespace Aura {
             // Finally let Application let go of GLFW window!
         }
 
-        void WindowInputEscape() {
+        void WindowInputEscape() const { // I DONT WANNA BE STUCK HEREEE
             if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                 std::cout << "Escape key pressed" << std::endl;
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
