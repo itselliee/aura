@@ -1,4 +1,4 @@
-# This starter workflow is for a CMake project running on multiple platforms.
+# This workflow builds, tests, packages, and releases on Linux, Windows, and macOS.
 name: CMake on multiple platforms
 
 on:
@@ -7,7 +7,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-# Grant write permissions for GitHub Releases
 permissions:
   contents: write
 
@@ -18,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
         c_compiler: [gcc, clang, cl]
         include:
@@ -31,6 +30,9 @@ jobs:
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+          - os: macos-latest
+            c_compiler: clang
+            cpp_compiler: clang++
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -38,11 +40,15 @@ jobs:
             c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
+          - os: macos-latest
+            c_compiler: gcc
+          - os: macos-latest
+            c_compiler: cl
 
     steps:
     - uses: actions/checkout@v4
 
-    # Install Linux Dependencies (OpenGL + GLFW + Virtual Display)
+    # --- 1. Install Linux Dependencies ---
     - name: Install System Dependencies (Linux)
       if: runner.os == 'Linux'
       run: |
@@ -58,10 +64,15 @@ jobs:
           libglfw3-dev \
           xvfb
 
-    # Install Windows Dependencies via vcpkg
+    # --- 2. Install Windows Dependencies ---
     - name: Install Dependencies (Windows)
       if: runner.os == 'Windows'
       run: vcpkg install glfw3:x64-windows
+
+    # --- 3. Install macOS Dependencies ---
+    - name: Install Dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: brew install glfw
 
     - name: Set reusable strings
       id: strings
@@ -77,7 +88,12 @@ jobs:
           EXTRA_ARGS="-DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         fi
 
-        cmake -B "${{ steps.strings.outputs.build-output-dir }}" -DCMAKE_CXX_COMPILER="${{ matrix.cpp_compiler }}" -DCMAKE_C_COMPILER="${{ matrix.c_compiler }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}" $EXTRA_ARGS -S "${{ github.workspace }}"
+        cmake -B "${{ steps.strings.outputs.build-output-dir }}" \
+          -DCMAKE_CXX_COMPILER="${{ matrix.cpp_compiler }}" \
+          -DCMAKE_C_COMPILER="${{ matrix.c_compiler }}" \
+          -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}" \
+          $EXTRA_ARGS \
+          -S "${{ github.workspace }}"
 
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
@@ -92,40 +108,29 @@ jobs:
           ctest --build-config ${{ matrix.build_type }}
         fi
 
-    # --- NEW STEP: Package Executables into ZIP ---
-    # --- Updated Packaging Step ---
     - name: Package Executables
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       shell: bash
       run: |
         mkdir -p dist
-        
-        # Convert Windows backslashes to forward slashes for Git Bash
         BUILD_DIR=$(echo "${{ steps.strings.outputs.build-output-dir }}" | tr '\\' '/')
         
         if [ "${{ runner.os }}" = "Windows" ]; then
-          # Recursively find all .exe files in build directory, ignoring internal CMake files
           find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
         else
-          # Recursively find Linux binaries, ignoring internal CMake files
+          # Handles Linux and macOS Unix executables
           find "$BUILD_DIR" -type f -executable ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
         fi
 
-        # Error check: Ensure we actually found and copied executable files
         if [ -z "$(ls -A dist)" ]; then
           echo "Error: No compiled executables were found in $BUILD_DIR"
           exit 1
         fi
 
-        # Generate unique zip name per matrix job
         ARCHIVE_NAME="aura-${{ matrix.os }}-${{ matrix.c_compiler }}"
-        
-        # Zip using Python
-        python -c "import shutil; shutil.make_archive('$ARCHIVE_NAME', 'zip', 'dist')"
-        
+        python3 -c "import shutil; shutil.make_archive('$ARCHIVE_NAME', 'zip', 'dist')"
         echo "ZIP_FILE=${ARCHIVE_NAME}.zip" >> "$GITHUB_ENV"
 
-    # --- NEW STEP: Create/Update Nightly Release ---
     - name: Upload to Nightly Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
