@@ -3,5 +3,6 @@
 ## Small little OpenGL game engine!
 
 [![Multi-OS builds](https://github.com/itselliee/aura/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/itselliee/aura/actions/workflows/cmake-multi-platform.yml)
+[![NO AI](https://no-ai-badge.nuxy.dev/badge.svg)](https://github.com/nuxy/no-ai-badge#no-ai-badge)
 
 This is a full new experience for me, so expect bugs, once this is properly stable on OGL, I'm moving this to Vulkan!
