@@ -93,26 +93,34 @@ jobs:
         fi
 
     # --- NEW STEP: Package Executables into ZIP ---
+    # --- Updated Packaging Step ---
     - name: Package Executables
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       shell: bash
       run: |
         mkdir -p dist
-        BUILD_DIR="${{ steps.strings.outputs.build-output-dir }}"
         
-        # Copy compiled executables to staging directory
+        # Convert Windows backslashes to forward slashes for Git Bash
+        BUILD_DIR=$(echo "${{ steps.strings.outputs.build-output-dir }}" | tr '\\' '/')
+        
         if [ "${{ runner.os }}" = "Windows" ]; then
-          # Visual Studio places output in build/Release/
-          cp $BUILD_DIR/Release/*.exe dist/ 2>/dev/null || cp $BUILD_DIR/*.exe dist/
+          # Recursively find all .exe files in build directory, ignoring internal CMake files
+          find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
         else
-          # Single-config generators place executables in build/
-          find $BUILD_DIR -maxdepth 1 -type f -executable -exec cp {} dist/ \;
+          # Recursively find Linux binaries, ignoring internal CMake files
+          find "$BUILD_DIR" -type f -executable ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
+        fi
+
+        # Error check: Ensure we actually found and copied executable files
+        if [ -z "$(ls -A dist)" ]; then
+          echo "Error: No compiled executables were found in $BUILD_DIR"
+          exit 1
         fi
 
         # Generate unique zip name per matrix job
         ARCHIVE_NAME="aura-${{ matrix.os }}-${{ matrix.c_compiler }}"
         
-        # Zip using Python (pre-installed cross-platform tool)
+        # Zip using Python
         python -c "import shutil; shutil.make_archive('$ARCHIVE_NAME', 'zip', 'dist')"
         
         echo "ZIP_FILE=${ARCHIVE_NAME}.zip" >> "$GITHUB_ENV"
