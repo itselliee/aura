@@ -118,8 +118,8 @@ jobs:
         if [ "${{ runner.os }}" = "Windows" ]; then
           find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
         else
-          # Handles Linux and macOS Unix executables
-          find "$BUILD_DIR" -type f -executable ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
+          # Compatible with both GNU find (Linux) and BSD find (macOS)
+          find "$BUILD_DIR" -type f ! -path "*/CMakeFiles/*" -exec test -x {} \; -exec cp {} dist/ \;
         fi
 
         if [ -z "$(ls -A dist)" ]; then
