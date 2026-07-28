@@ -68,7 +68,7 @@ jobs:
         id: release_tag
         shell: bash
         run: |
-          echo "tag=nightly-$(date +'%Y%m%d')-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "tag=build-${{ github.run_number }}-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
       - name: Configure CMake
         shell: bash
         run: |
@@ -96,7 +96,7 @@ jobs:
         run: |
           mkdir -p dist
           BUILD_DIR=$(echo "${{ steps.strings.outputs.build-output-dir }}" | tr '\\' '/')
-          
+
           if [ "${{ runner.os }}" = "Windows" ]; then
             find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
           else
@@ -110,13 +110,13 @@ jobs:
           ARCHIVE_NAME="aura-${{ matrix.os }}-${{ matrix.c_compiler }}"
           python3 -c "import shutil; shutil.make_archive('$ARCHIVE_NAME', 'zip', 'dist')"
           echo "ZIP_FILE=${ARCHIVE_NAME}.zip" >> "$GITHUB_ENV"
-      - name: Upload to Nightly Release
+      - name: Upload to New Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.release_tag.outputs.tag }}
-          name: "Nightly Build ${{ steps.release_tag.outputs.tag }}"
-          body: "Automated rolling nightly build generated from commit ${{ github.sha }} on `main`."
+          name: "Build ${{ steps.release_tag.outputs.tag }}"
+          body: "Automated build generated from commit ${{ github.sha }} on `main`."
           prerelease: true
           files: ${{ env.ZIP_FILE }}
         env:
@@ -127,17 +127,17 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Prune old nightly releases (keep latest 50)
+      - name: Prune old releases (keep latest 50)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO="${{ github.repository }}"
           KEEP=50
 
-          # List nightly-tagged releases, filter to the nightly-* tag pattern,
+          # List build-tagged releases, filter to the build-* tag pattern,
           # newest first, then delete everything past the newest $KEEP.
           gh release list --repo "$REPO" --limit 1000 \
-            | awk -F'\t' '$3 ~ /^nightly-/ {print $3}' \
+            | awk -F'\t' '$3 ~ /^build-/ {print $3}' \
             | sort -r \
             | tail -n +$((KEEP + 1)) \
             | while read -r tag; do
