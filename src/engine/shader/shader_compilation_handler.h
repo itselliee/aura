@@ -6,7 +6,6 @@
 #define AURA_SHADER_COMPILATION_HANDLER_H
 #include <sstream>
 #include <unordered_map>
-#include <bits/basic_string.h>
 
 #include <glad/glad.h>
 
