@@ -36,8 +36,12 @@ add_executable(aura
         ${IMGUI_DIR}/imgui_demo.cpp
         ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
         ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
-        src/engine/imgui_ext/imgui_perf_panel.h
-        src/engine/imgui_ext/imgui_perf_panel.cpp
+        src/editor/imgui_panels/imgui_perf_panel.h
+        src/editor/imgui_panels/imgui_perf_panel.cpp
+        src/engine/imgui/pushToRenderStack.h
+        src/engine/imgui/pushToRenderStack.cpp
+        src/editor/imgui_panels/imgui_example_panel.cpp
+        src/editor/imgui_panels/imgui_example_panel.h
 )
 
 # 4. Include directories (prefer target_include_directories over global include_directories)

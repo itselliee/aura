@@ -2,9 +2,12 @@
 // Created by ellie on 7/28/26.
 //
 
+#include <functional>
+
 #include "imgui.h"
 #include "../generalImports.h"
-#include "../imgui_ext/imgui_perf_panel.h"
+#include "../imgui/pushToRenderStack.h"
+#include "../../editor/imgui_panels/imgui_perf_panel.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
@@ -34,12 +37,15 @@ namespace Aura {
             ImGui::NewFrame();
             ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
-            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClearColor(0.075f, 0.075f, 0.075f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
         void EndFrame() {
-            perfPanel->BeginPanel();
+            for(const std::function<void()>& i : ImGuiRenderExt::currentRenderStackQueue) {
+                i();
+            }
+
             ImGui::ShowDebugLogWindow();
 
             ImGui::Render();
@@ -49,7 +55,5 @@ namespace Aura {
         private:
 
         GLFWwindow* window = nullptr;
-
-        PerformancePanel *perfPanel = new PerformancePanel();
     };
 }

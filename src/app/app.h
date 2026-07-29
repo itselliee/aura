@@ -4,6 +4,8 @@
 
 #ifndef AURA_APP_H
 #define AURA_APP_H
+#include "../editor/imgui_panels/imgui_perf_panel.h"
+#include "../editor/imgui_panels/imgui_example_panel.h"
 #include "../engine/input/input2text.h"
 #include "../engine/render/render.h"
 #include "../engine/window/window.h"
@@ -13,6 +15,9 @@ namespace Aura {
     class App {
         public:
 
+        AuraEditor::PerformancePanel perfPanel;
+        AuraEditor::ExamplePanel examplePanel;
+
         void Run() {
             if (!m_Window->createWindow(1280, 720)) {
                 std::cerr << "Failed to create window" << std::endl;
@@ -20,6 +25,11 @@ namespace Aura {
             }
 
             m_Renderer->Init(m_Window->window);
+
+            ImGuiRenderExt::PushToRenderStack([this]() -> void {
+                this->perfPanel.BeginPanel();
+                this->examplePanel.BeginPanel();
+            });
 
             while (!m_Window->ShouldClose()) {
                 for (const auto& event : InputSystem::eventQueue) {

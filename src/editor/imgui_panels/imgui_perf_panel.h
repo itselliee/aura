@@ -5,7 +5,7 @@
 #include "imgui.h"
 #include "GLFW/glfw3.h"
 
-namespace Aura {
+namespace AuraEditor {
     class PerformancePanel {
     public:
         void BeginPanel();
