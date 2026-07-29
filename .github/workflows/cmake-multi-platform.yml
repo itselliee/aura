@@ -43,6 +43,8 @@ jobs:
       release_tag: ${{ steps.release_tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Install System Dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
