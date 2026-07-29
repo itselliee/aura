@@ -18,9 +18,13 @@ add_subdirectory(src/thirdparty/glfw)
 add_executable(aura
         src/main.cpp
         src/thirdparty/lib/src/glad.c
-        src/window/IWindow.h
-        src/application/Application.h
-        src/render/Renderer.h
+        src/engine/generalImports.h
+        src/engine/window/window.h
+        src/engine/render/render.h
+        src/engine/input/inputsys.h
+        src/engine/event/eventsys.h
+        src/app/app.h
+        src/engine/input/input2text.h
 )
 
 # 4. Include directories (prefer target_include_directories over global include_directories)

@@ -9,10 +9,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "application/Application.h"
+#include "app/app.h"
 
 int main() {
-    auto *app = new Aura::Application();
+    auto *app = new Aura::App();
 
     app->Run();
 
