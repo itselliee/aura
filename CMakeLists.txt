@@ -1,79 +1,51 @@
 cmake_minimum_required(VERSION 3.20)
-
-project(aura C CXX)
+project(Aura)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-set(CMAKE_BUILD_TYPE Debug)
+set(GLFW_BUILD_DOCS OFF CACHE INTERNAL "")
+set(GLFW_BUILD_TESTS OFF CACHE INTERNAL "")
+set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "")
+add_subdirectory(third-party/glfw)
 
-add_subdirectory(src/thirdparty/glfw)
+add_library(glad STATIC third-party/glad/lib/src/glad.c)
+target_include_directories(glad PUBLIC third-party/glad/include)
 
-set(IMGUI_DIR src/thirdparty/imgui)
-
-add_executable(aura
-        src/main.cpp
-        src/thirdparty/glad/lib/src/glad.c
-        src/engine/generalImports.h
-        src/engine/window/window.h
-        src/engine/render/render.h
-        src/engine/input/inputsys.h
-        src/engine/event/eventsys.h
-        src/app/app.h
-        src/engine/input/input2text.h
-        ${IMGUI_DIR}/imgui.cpp
-        ${IMGUI_DIR}/imgui_draw.cpp
-        ${IMGUI_DIR}/imgui_widgets.cpp
-        ${IMGUI_DIR}/imgui_tables.cpp
-        ${IMGUI_DIR}/imgui_demo.cpp
-        ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
-        ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
-        src/editor/imgui_panels/imgui_perf_panel.h
-        src/editor/imgui_panels/imgui_perf_panel.cpp
-        src/editor/imgui_panels/imgui_example_panel.cpp
-        src/editor/imgui_panels/imgui_example_panel.h
-        src/engine/render/render.cpp
-        src/engine/window/window.cpp
-        src/engine/imguiPanelManager/imgui_panel_manager.cpp
-        src/engine/imguiPanelManager/imgui_panel_manager.h
-        src/engine/shader/shader_compilation_handler.cpp
-        src/engine/shader/shader_compilation_handler.h
+add_library(imgui STATIC
+        third-party/imgui/imgui.cpp
+        third-party/imgui/imgui_demo.cpp
+        third-party/imgui/imgui_draw.cpp
+        third-party/imgui/imgui_tables.cpp
+        third-party/imgui/imgui_widgets.cpp
+        third-party/imgui/backends/imgui_impl_glfw.cpp
+        third-party/imgui/backends/imgui_impl_opengl3.cpp
+)
+target_include_directories(imgui PUBLIC
+        third-party/imgui
+        third-party/imgui/backends
+        third-party/glad/include
 )
 
-if(APPLE)
-    target_compile_definitions(aura PRIVATE IS_APPLE_PLATFORM)
-endif()
-
-target_include_directories(aura PRIVATE
-        src/thirdparty/glad/include
-        ${IMGUI_DIR}
-        ${IMGUI_DIR}/backend
+add_library(aura-engine STATIC
+        aura-engine/src/application.cpp
+        aura-engine/src/window.cpp
 )
 
-find_package(OpenGL REQUIRED)
+target_include_directories(aura-engine PUBLIC aura-engine/include)
 
-target_link_libraries(aura PRIVATE
-        glfw
-        OpenGL::GL
+target_include_directories(aura-engine PRIVATE third-party/imgui)
+
+target_link_libraries(aura-engine PRIVATE glfw glad)
+
+add_executable(aura-editor
+        aura-editor/src/main.cpp
+        aura-editor/include/panel-layer.h
+
 )
 
-add_custom_command(TARGET aura POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-        $<TARGET_FILE_DIR:aura>/shaders
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/src/included_shaders
-        $<TARGET_FILE_DIR:aura>/shaders
-        COMMENT "Copying shaders to output directory"
+target_link_libraries(aura-editor PRIVATE
+        aura-engine
+        imgui
 )
 
-install(TARGETS aura
-        RUNTIME DESTINATION .
-)
-
-install(DIRECTORY src/included_shaders/
-        DESTINATION shaders
-)
