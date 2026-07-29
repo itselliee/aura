@@ -45,7 +45,7 @@ add_executable(aura
 )
 
 if(APPLE)
-    target_compile_definitions(my_target PRIVATE IS_APPLE_PLATFORM)
+    target_compile_definitions(aura PRIVATE IS_APPLE_PLATFORM)
 endif()
 
 target_include_directories(aura PRIVATE
