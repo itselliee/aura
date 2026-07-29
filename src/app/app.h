@@ -19,9 +19,9 @@ namespace Aura {
                 return;
             }
 
-            while (!m_Window->ShouldClose()) {
-                m_Renderer->Render();
+            m_Renderer->Init(m_Window->window);
 
+            while (!m_Window->ShouldClose()) {
                 for (const auto& event : InputSystem::eventQueue) {
                     std::string keyName = Input2Text::getCleanKeyName(event.keyId);
 
@@ -36,6 +36,12 @@ namespace Aura {
                 }
 
                 InputSystem::clearQueue();
+
+                m_Renderer->BeginFrame();
+
+                // well ill write triangle code later lol
+
+                m_Renderer->EndFrame();
 
                 m_Window->SwapBuffers();
                 m_Window->PollEvents();

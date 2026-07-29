@@ -14,10 +14,12 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 # 2. Add the bundled GLFW source code as a subproject
 add_subdirectory(src/thirdparty/glfw)
 
+set(IMGUI_DIR src/thirdparty/imgui)
+
 # 3. Target definition
 add_executable(aura
         src/main.cpp
-        src/thirdparty/lib/src/glad.c
+        src/thirdparty/glad/lib/src/glad.c
         src/engine/generalImports.h
         src/engine/window/window.h
         src/engine/render/render.h
@@ -25,11 +27,22 @@ add_executable(aura
         src/engine/event/eventsys.h
         src/app/app.h
         src/engine/input/input2text.h
+        ${IMGUI_DIR}/imgui.cpp
+        ${IMGUI_DIR}/imgui_draw.cpp
+        ${IMGUI_DIR}/imgui_widgets.cpp
+        ${IMGUI_DIR}/imgui_tables.cpp
+        ${IMGUI_DIR}/imgui_demo.cpp
+        ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+        ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+        src/engine/imgui_ext/imgui_perf_panel.h
+        src/engine/imgui_ext/imgui_perf_panel.cpp
 )
 
 # 4. Include directories (prefer target_include_directories over global include_directories)
 target_include_directories(aura PRIVATE
-        src/thirdparty/include
+        src/thirdparty/glad/include
+        ${IMGUI_DIR}
+        ${IMGUI_DIR}/backend
 )
 
 # 5. Find system OpenGL (required by GLAD / GLFW rendering)

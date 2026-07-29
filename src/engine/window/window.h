@@ -47,6 +47,8 @@ namespace Aura {
             glfwSetKeyCallback(window, glfw_key_callback);
             glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
 
+            glfwSwapInterval(0);
+
             return true;
         }
 
