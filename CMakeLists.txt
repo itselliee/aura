@@ -44,6 +44,10 @@ add_executable(aura
         src/engine/shader/shader_compilation_handler.h
 )
 
+if(APPLE)
+    target_compile_definitions(my_target PRIVATE IS_APPLE_PLATFORM)
+endif()
+
 target_include_directories(aura PRIVATE
         src/thirdparty/glad/include
         ${IMGUI_DIR}
