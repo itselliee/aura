@@ -96,13 +96,22 @@ jobs:
         run: |
           mkdir -p dist
           BUILD_DIR=$(echo "${{ steps.strings.outputs.build-output-dir }}" | tr '\\' '/')
-
+        
           if [ "${{ runner.os }}" = "Windows" ]; then
             find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
           else
             # Compatible with both GNU find (Linux) and BSD find (macOS)
             find "$BUILD_DIR" -type f ! -path "*/CMakeFiles/*" -exec test -x {} \; -exec cp {} dist/ \;
           fi
+        
+          # Copy the shaders folder alongside the executable
+          SHADER_SRC=$(find "$BUILD_DIR" -type d -name "shaders" ! -path "*/CMakeFiles/*" | head -n 1)
+          if [ -n "$SHADER_SRC" ] && [ "$(ls -A "$SHADER_SRC" 2>/dev/null)" ]; then
+            cp -r "$SHADER_SRC" dist/shaders
+          else
+            echo "Warning: shaders folder not found or empty at $SHADER_SRC"
+          fi
+        
           if [ -z "$(ls -A dist)" ]; then
             echo "Error: No compiled executables were found in $BUILD_DIR"
             exit 1

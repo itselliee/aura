@@ -8,6 +8,7 @@
 #include "../editor/imgui_panels/imgui_example_panel.h"
 #include "../engine/input/input2text.h"
 #include "../engine/render/render.h"
+#include "../engine/shader/shader_compilation_handler.h"
 #include "../engine/window/window.h"
 
 namespace Aura {
@@ -25,11 +26,6 @@ namespace Aura {
             }
 
             m_Renderer->Init(m_Window->window);
-
-            ImGuiRenderExt::PushToRenderStack([this]() -> void {
-                this->perfPanel.BeginPanel();
-                this->examplePanel.BeginPanel();
-            });
 
             while (!m_Window->ShouldClose()) {
                 for (const auto& event : InputSystem::eventQueue) {
@@ -49,14 +45,14 @@ namespace Aura {
 
                 InputSystem::clearQueue();
 
-                m_Renderer->BeginFrame();
+                Renderer::BeginFrame();
 
-                // well ill write triangle code later lol
+                Renderer::OglRenderPass();
 
-                m_Renderer->EndFrame();
+                Renderer::EndFrame();
 
                 m_Window->SwapBuffers();
-                m_Window->PollEvents();
+                Window::PollEvents();
             }
         }
 

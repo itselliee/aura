@@ -4,10 +4,11 @@
 
 #include <functional>
 
+#include <glad/glad.h>
+#include "GLFW/glfw3.h"
+
 #include "imgui.h"
-#include "../generalImports.h"
-#include "../imgui/pushToRenderStack.h"
-#include "../../editor/imgui_panels/imgui_perf_panel.h"
+#include "../../editor/imgui_panels/imgui_example_panel.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
@@ -15,45 +16,18 @@ namespace Aura {
     class Renderer {
         public:
 
-        bool Init(GLFWwindow* wind) {
-            window = wind;
+        bool Init(GLFWwindow* wind);
 
-            IMGUI_CHECKVERSION();
-            ImGui::CreateContext();
-            ImGuiIO& io = ImGui::GetIO(); (void)io;
-            io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-            ImGui::StyleColorsDark();
+        static void BeginFrame();
 
-            ImGui_ImplGlfw_InitForOpenGL(window, true);
-            ImGui_ImplOpenGL3_Init("#version 330");
+        static void OglRenderPass();
 
-            return true;
-        }
-
-        void BeginFrame() {
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-
-            ImGui::NewFrame();
-            ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
-
-            glClearColor(0.075f, 0.075f, 0.075f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        }
-
-        void EndFrame() {
-            for(const std::function<void()>& i : ImGuiRenderExt::currentRenderStackQueue) {
-                i();
-            }
-
-            ImGui::ShowDebugLogWindow();
-
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        }
+        static void EndFrame();
 
         private:
 
         GLFWwindow* window = nullptr;
+
+
     };
 }
