@@ -40,6 +40,7 @@ namespace Aura {
 
         void EndFrame() {
             perfPanel->BeginPanel();
+            ImGui::ShowDebugLogWindow();
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

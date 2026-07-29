@@ -28,7 +28,9 @@ namespace Aura {
                     std::string actionName = (event.action == GLFW_PRESS)   ? "PRESSED"  :
                                              (event.action == GLFW_RELEASE) ? "RELEASED" : "HELD";
 
-                    std::cout << "Input System: " << keyName << " was " << actionName << "\n";
+                    if (event.action == GLFW_PRESS) {
+                        IMGUI_DEBUG_LOG("Input System: %s was %s\n", keyName.c_str(), actionName.c_str());
+                    }
 
                     if (keyName == "ESCAPE" && event.action == GLFW_PRESS) {
                         glfwSetWindowShouldClose(m_Window->window, GLFW_TRUE);
