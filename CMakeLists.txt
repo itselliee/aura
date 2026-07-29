@@ -26,6 +26,7 @@ target_include_directories(imgui PUBLIC
         third-party/imgui/backends
         third-party/glad/include
 )
+target_link_libraries(imgui PUBLIC glfw)
 
 add_library(aura-engine STATIC
         aura-engine/src/application.cpp
