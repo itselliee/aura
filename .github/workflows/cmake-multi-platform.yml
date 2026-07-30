@@ -97,7 +97,7 @@ jobs:
         run: |
           mkdir -p dist
           BUILD_DIR=$(echo "${{ steps.strings.outputs.build-output-dir }}" | tr '\\' '/')
-            
+          
           if [ "${{ runner.os }}" = "Windows" ]; then
             find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
             find "$BUILD_DIR" -type f -name "*.lib" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
@@ -105,7 +105,7 @@ jobs:
             find "$BUILD_DIR" -type f ! -path "*/CMakeFiles/*" -exec test -x {} \; -exec cp {} dist/ \;
             find "$BUILD_DIR" -type f -name "*.a" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
           fi
-            
+          
           # Copy the shaders folder alongside the executable
           SHADER_SRC=$(find "$BUILD_DIR" -type d -name "shaders" ! -path "*/CMakeFiles/*" | head -n 1)
           if [ -n "$SHADER_SRC" ] && [ "$(ls -A "$SHADER_SRC" 2>/dev/null)" ]; then
@@ -113,7 +113,7 @@ jobs:
           else
             echo "Warning: shaders folder not found or empty at $SHADER_SRC"
           fi
-            
+          
           # Copy the resources folder alongside the executable
           RESOURCES_SRC=$(find "$BUILD_DIR" -type d -name "resources" ! -path "*/CMakeFiles/*" | head -n 1)
           if [ -n "$RESOURCES_SRC" ] && [ "$(ls -A "$RESOURCES_SRC" 2>/dev/null)" ]; then
@@ -121,17 +121,22 @@ jobs:
           else
             echo "Warning: resources folder not found or empty at $RESOURCES_SRC"
           fi
-            
+          
           if [ -z "$(ls -A dist)" ]; then
             echo "Error: No compiled executables were found in $BUILD_DIR"
             exit 1
           fi
           
-          if ["${{runner.os}}" = "Linux" ]; then
-            ARCHIVE_NAME="aura-linux-${{ matrix.c_compiler }}"
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            OS_NAME="linux"
+          elif [ "${{ runner.os }}" = "Windows" ]; then
+            OS_NAME="windows"
           else
-            ARCHIVE_NAME="aura-${{ matrix.os }}-${{ matrix.c_compiler }}"
+            OS_NAME="macos"
           fi
+
+          ARCHIVE_NAME="aura-${OS_NAME}-${{ matrix.c_compiler }}"
+          
           python3 -c "import shutil; shutil.make_archive('$ARCHIVE_NAME', 'zip', 'dist')"
           echo "ZIP_FILE=${ARCHIVE_NAME}.zip" >> "$GITHUB_ENV"
       - name: Upload to New Release
@@ -143,8 +148,8 @@ jobs:
           body: "Automated build generated from commit ${{ github.sha }} on `main`."
           prerelease: true
           files: ${{ env.ZIP_FILE }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   cleanup:
     needs: build
