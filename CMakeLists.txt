@@ -28,16 +28,16 @@ target_include_directories(imgui PUBLIC
 )
 target_link_libraries(imgui PUBLIC glfw)
 
-add_library(aura-engine STATIC
+add_library(engine STATIC
         aura-engine/src/application.cpp
         aura-engine/src/window.cpp
 )
 
-target_include_directories(aura-engine PUBLIC aura-engine/include)
+target_include_directories(engine PUBLIC aura-engine/include)
 
-target_include_directories(aura-engine PRIVATE third-party/imgui)
+target_include_directories(engine PRIVATE third-party/imgui)
 
-target_link_libraries(aura-engine PRIVATE glfw glad)
+target_link_libraries(engine PRIVATE glfw glad)
 
 add_executable(aura-editor
         aura-editor/src/main.cpp
@@ -46,7 +46,7 @@ add_executable(aura-editor
 )
 
 target_link_libraries(aura-editor PRIVATE
-        aura-engine
+        engine
         imgui
 )
 

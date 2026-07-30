@@ -17,7 +17,6 @@ namespace aura {
     }
 
     void application::run() {
-
         while (!m_window->should_close() && m_running) {
             for (layer* layer : m_layer_stack) {
                 layer->on_update(0);
@@ -39,8 +38,6 @@ namespace aura {
 
             m_window->window_refresh();
         }
-
-        return;
     }
 
     void application::push_layer(layer *layer) {
