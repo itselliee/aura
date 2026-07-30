@@ -21,21 +21,21 @@ namespace aura {
             for (layer* layer : m_layer_stack) {
                 layer->on_update(0);
             }
-
             for (layer* layer : m_layer_stack) {
                 layer->on_render();
             }
 
+            layer* render_layer = nullptr;
             for (layer* layer : m_layer_stack) {
-                if (layer->get_name() != "render_pipeline") {
+                if (layer->get_name() == "render_pipeline") {
+                    render_layer = layer;
+                } else {
                     layer->on_gui();
                 }
             }
-
-            if (!m_layer_stack.empty()) {
-                m_layer_stack.front()->on_gui();
+            if (render_layer) {
+                render_layer->on_gui();
             }
-
             m_window->window_refresh();
         }
     }

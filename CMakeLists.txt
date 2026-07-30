@@ -42,12 +42,21 @@ target_link_libraries(engine PRIVATE glfw glad)
 
 add_executable(aura-editor
         aura-editor/src/main.cpp
+        aura-editor/src/stb_image_impl.cpp
         aura-editor/include/panel-layer.h
-
+        aura-editor/src/stb_image_impl.cpp
 )
-
+target_include_directories(aura-editor PRIVATE aura-editor/vendor/stb)
 target_link_libraries(aura-editor PRIVATE
         engine
         imgui
+        glad
 )
+
+add_custom_command(TARGET aura-editor POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/aura-editor/resources"
+        "$<TARGET_FILE_DIR:aura-editor>/resources"
+)
+
 
