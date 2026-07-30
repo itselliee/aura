@@ -12,9 +12,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        build_type: [Release]
-        c_compiler: [gcc, clang, cl]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        build_type: [ Release ]
+        c_compiler: [ gcc, clang, cl ]
         include:
           - os: windows-latest
             c_compiler: cl
@@ -103,7 +103,6 @@ jobs:
             find "$BUILD_DIR" -type f -name "*.exe" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
             find "$BUILD_DIR" -type f -name "*.lib" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
           else
-            # Compatible with both GNU find (Linux) and BSD find (macOS)
             find "$BUILD_DIR" -type f ! -path "*/CMakeFiles/*" -exec test -x {} \; -exec cp {} dist/ \;
             find "$BUILD_DIR" -type f -name "*.a" ! -path "*/CMakeFiles/*" -exec cp {} dist/ \;
           fi
@@ -114,6 +113,14 @@ jobs:
             cp -r "$SHADER_SRC" dist/shaders
           else
             echo "Warning: shaders folder not found or empty at $SHADER_SRC"
+          fi
+            
+          # Copy the resources folder alongside the executable
+          RESOURCES_SRC=$(find "$BUILD_DIR" -type d -name "resources" ! -path "*/CMakeFiles/*" | head -n 1)
+          if [ -n "$RESOURCES_SRC" ] && [ "$(ls -A "$RESOURCES_SRC" 2>/dev/null)" ]; then
+            cp -r "$RESOURCES_SRC" dist/resources
+          else
+            echo "Warning: resources folder not found or empty at $RESOURCES_SRC"
           fi
             
           if [ -z "$(ls -A dist)" ]; then
