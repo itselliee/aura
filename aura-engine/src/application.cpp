@@ -50,7 +50,7 @@ namespace aura {
         layer->on_attach();
     }
 
-    window *application::get_window() const {
+    aura::window * application::get_window() const {
         return m_window;
     }
 } // aura

@@ -6,7 +6,7 @@
 
 namespace aura {
     window::window(const int width, const int height) {
-        std::cout << "Initializing window" << std::endl;
+        std::cout << "initializing window" << std::endl;
 
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -20,7 +20,7 @@ namespace aura {
         m_window = glfwCreateWindow(width, height, "aURA", nullptr, nullptr);
 
         if (m_window == nullptr) {
-            std::cerr << "Failed to create GLFW window" << std::endl;
+            std::cerr << "failed to create glfw window" << std::endl;
             glfwTerminate();
             return;
         }
@@ -28,7 +28,7 @@ namespace aura {
         glfwMakeContextCurrent(m_window);
 
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-            std::cerr << "Failed to initialize GLAD" << std::endl;
+            std::cerr << "failed to initialize glad" << std::endl;
             return;
         }
 
@@ -40,7 +40,7 @@ namespace aura {
     }
 
     window::~window() {
-        std::cout << "Destroying window" << std::endl;
+        std::cout << "destroying window" << std::endl;
         if (m_window) glfwDestroyWindow(m_window);
         glfwTerminate();
     }

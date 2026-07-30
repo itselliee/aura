@@ -11,10 +11,12 @@
 
 class panel_layer : public aura::layer {
 public:
-    panel_layer() : layer("editor_panels") {}
+    aura::window* m_window;
+
+    panel_layer(aura::window *window) : layer("editor_panels") { m_window = window; }
 
     void on_attach() override {
-        std::cout << "attached to game" << std::endl;
+        std::cout << "attached panel layer to engine layerstack" << std::endl;
     }
 
     void on_gui() override {
@@ -22,6 +24,8 @@ public:
         static float displayedFPS = 0.0f;
         static float displayedMsPerFrame = 0.0f;
         static bool vSync = false;
+
+        static bool show_perf_window = true;
 
         float currentTime = ImGui::GetTime();
 
@@ -38,13 +42,32 @@ public:
             lastUpdateTime = currentTime;
         }
 
-        ImGui::Begin("Performance Monitor & Settings");
-        ImGui::Text("FPS: %.1f", displayedFPS);
-        ImGui::Text("Frametime: %.3fms", displayedMsPerFrame);
-        if (ImGui::Checkbox("VSync", &vSync)) {
-            glfwSwapInterval(vSync ? 1 : 0);
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Close")) {
+                    glfwSetWindowShouldClose(m_window->glfw_window(), GLFW_TRUE);
+                }
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Windows")) {
+                if (ImGui::MenuItem("Performance & Settings")) {
+                    show_perf_window = !show_perf_window;
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
         }
-        ImGui::End();
+
+        if (show_perf_window) {
+            ImGui::Begin("Performance Monitor & Settings");
+            ImGui::Text("FPS: %.1f", displayedFPS);
+            ImGui::Text("Frametime: %.3fms", displayedMsPerFrame);
+            if (ImGui::Checkbox("VSync", &vSync)) {
+                glfwSwapInterval(vSync ? 1 : 0);
+            }
+            ImGui::End();
+        }
 
     }
 };

@@ -31,6 +31,7 @@ target_link_libraries(imgui PUBLIC glfw)
 add_library(engine STATIC
         aura-engine/src/application.cpp
         aura-engine/src/window.cpp
+        aura-engine/include/input.h
 )
 
 target_include_directories(engine PUBLIC aura-engine/include)

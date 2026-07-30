@@ -10,7 +10,8 @@ namespace aura {
 
         void run();
         void push_layer(layer* layer);
-        window* get_window() const;
+
+        aura::window * get_window() const;
 
     private:
         window* m_window = nullptr;
