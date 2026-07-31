@@ -6,7 +6,7 @@
 #include <iostream>
 #include "imgui.h"
 #include "layer.h"
-#include "stb_image.h"
+#include <stb_image.h>
 
 class panel_layer : public aura::layer {
 public:
@@ -49,6 +49,7 @@ public:
         static float displayedMsPerFrame = 0.0f;
         static bool vSync = false;
         static bool show_perf_window = true;
+        static bool show_console_window = true;
         static bool open_about_popup = false;
         static float modal_alpha = 0.0f;
         const float fade_speed = 6.0f;
@@ -74,6 +75,9 @@ public:
             if (ImGui::BeginMenu("Window")) {
                 if (ImGui::MenuItem("Performance & Settings")) {
                     show_perf_window = !show_perf_window;
+                }
+                if (ImGui::MenuItem("Console")) {
+                    show_console_window = !show_console_window;
                 }
                 ImGui::EndMenu();
             }
@@ -141,6 +145,10 @@ public:
                 glfwSwapInterval(vSync ? 1 : 0);
             }
             ImGui::End();
+        }
+
+        if (show_console_window) {
+            ImGui::ShowDebugLogWindow();
         }
     }
 };

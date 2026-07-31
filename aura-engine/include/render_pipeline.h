@@ -20,6 +20,7 @@ namespace aura {
             ImGui::CreateContext();
             ImGuiIO &io = ImGui::GetIO();
             io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+            io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
             ImGui::StyleColorsDark();
             ImGui::GetStyle().WindowRounding = 4.0f;
 
@@ -97,21 +98,33 @@ namespace aura {
         }
 
         void on_render() override {
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            apply_theme();
-            ImGui::NewFrame();
-            ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
-
+            // ONLY clear the main window hardware buffers here
             glClearColor(0.075f, 0.075f, 0.075f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
+        // Call this BEFORE any other layer executes on_gui()
+        void begin_gui() {
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            apply_theme(); // Safe here or in on_attach
+            ImGui::NewFrame();
+
+            // Establish the global Dockspace background wrapper
+            ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
+        }
+
+        // Your pipeline's regular on_gui layer pass (runs after other layers)
         void on_gui() override {
+            // Optional: Put pipeline/editor specific windows here
+            // ImGui::Begin("Pipeline Stats"); ... ImGui::End();
+        }
+
+        // Call this AFTER all layers have finished submitting their UI elements
+        void end_gui() {
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-            // Required since you enabled ImGuiConfigFlags_ViewportsEnable
             ImGuiIO &io = ImGui::GetIO();
             if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
                 GLFWwindow *backup_context = glfwGetCurrentContext();

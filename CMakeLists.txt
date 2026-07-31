@@ -1,16 +1,24 @@
+# Comments are littered around in this purely for organization, I cant read it properly without them.
+
 cmake_minimum_required(VERSION 3.20)
-project(Aura)
+project(aura)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# --== GLFW Environmental Variables ==--
 
 set(GLFW_BUILD_DOCS OFF CACHE INTERNAL "")
 set(GLFW_BUILD_TESTS OFF CACHE INTERNAL "")
 set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "")
 add_subdirectory(third-party/glfw)
 
+# --== GLAD Library ==--
+
 add_library(glad STATIC third-party/glad/lib/src/glad.c)
 target_include_directories(glad PUBLIC third-party/glad/include)
+
+# --== IMGUI Library ==--
 
 add_library(imgui STATIC
         third-party/imgui/imgui.cpp
@@ -24,38 +32,45 @@ add_library(imgui STATIC
 target_include_directories(imgui PUBLIC
         third-party/imgui
         third-party/imgui/backends
-        third-party/glad/include
+        third-party/glad/include # Need this for OGL render
 )
 target_link_libraries(imgui PUBLIC glfw)
 
-add_library(engine STATIC
-        aura-engine/src/application.cpp
-        aura-engine/src/window.cpp
+# --== Aura Engine Library (Hey! This is our one!) ==--
+add_library(aura-core STATIC
+        engine/src/app.cpp
+        engine/src/input_system.cpp
+        engine/src/internal_layer_stack.cpp
+        engine/src/layer_stack.cpp
+        engine/src/renderer.cpp
+        engine/src/window.cpp
 )
 
-target_include_directories(engine PUBLIC aura-engine/include)
+## -= Third-party =-
+target_include_directories(aura-core PUBLIC third-party/stb)
+target_include_directories(aura-core PRIVATE third-party/imgui)
+target_link_libraries(aura-core PRIVATE glfw glad)
 
-target_include_directories(engine PRIVATE third-party/imgui)
+## -= Our code =-
+target_include_directories(aura-core PUBLIC engine/include)
 
-target_link_libraries(engine PRIVATE glfw glad)
-
+# --== Aura Editor Executable (This is our one, and it actually returns the results! WOOO!)
 add_executable(aura-editor
-        aura-editor/src/main.cpp
-        aura-editor/src/stb_image_impl.cpp
-        aura-editor/include/panel-layer.h
-        aura-editor/src/stb_image_impl.cpp
+        editor/src/main.cpp
+        editor/ext-layers/editor-panels/performance_panel.h
 )
-target_include_directories(aura-editor PRIVATE aura-editor/vendor/stb)
+
+target_include_directories(aura-editor PRIVATE editor/ext-layers)
+
 target_link_libraries(aura-editor PRIVATE
-        engine
+        aura-core
         imgui
         glad
 )
 
+# --== Post Setup ==--
 add_custom_command(TARGET aura-editor POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/aura-editor/resources"
-        "$<TARGET_FILE_DIR:aura-editor>/resources"
+        "${CMAKE_CURRENT_SOURCE_DIR}/editor/res"
+        "$<TARGET_FILE_DIR:aura-editor>/res"
 )
-
-
