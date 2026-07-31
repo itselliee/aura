@@ -42,8 +42,8 @@ add_library(aura-core STATIC
         engine/src/input_system.cpp
         engine/src/internal_layer_stack.cpp
         engine/src/layer_stack.cpp
-        engine/src/renderer.cpp
         engine/src/window.cpp
+        engine/src/renderer.cpp
 )
 
 ## -= Third-party =-
@@ -69,8 +69,8 @@ target_link_libraries(aura-editor PRIVATE
 )
 
 # --== Post Setup ==--
-add_custom_command(TARGET aura-editor POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/editor/res"
-        "$<TARGET_FILE_DIR:aura-editor>/res"
-)
+#add_custom_command(TARGET aura-editor POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory
+#        "${CMAKE_CURRENT_SOURCE_DIR}/editor/res"
+#        "$<TARGET_FILE_DIR:aura-editor>/res"
+#)

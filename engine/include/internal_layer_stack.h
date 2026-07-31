@@ -7,10 +7,15 @@
 #include <string>
 #include <vector>
 
+#include "window.h"
+
 namespace aura_core {
     class internal_layer {
     public:
         internal_layer(std::string name = "name_not_impl_internal") : m_debug_name(std::move(name)) {}
+
+        explicit internal_layer(window * window);
+
         virtual ~internal_layer() = default;
 
         virtual void on_attach() {}

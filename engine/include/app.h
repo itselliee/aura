@@ -6,6 +6,8 @@
 #define AURA_APP_H
 #include "internal_layer_stack.h"
 #include "layer_stack.h"
+#include "window.h"
+#include "../src/renderer.cpp"
 
 namespace aura_core {
     class app {
@@ -15,14 +17,13 @@ namespace aura_core {
 
         void run();
 
-        // TODO: FINISH THIS FUNCTIONS - AFTER window.h HAS BEEN MADE
-        void push_layer(layer* layer);
+        void push_layer(layer* layer) const;
 
-        int* get_window() const;
+        [[nodiscard]] window* get_window() const;
     private:
-        int *m_window = nullptr; // TODO
-        layer_stack *m_layerstack; // TODO
-        internal_layer_stack *m_internal_layerstack; // TODO
+        window *m_window = nullptr;
+        layer_stack *m_layerstack;
+        internal_layer_stack *m_internal_layerstack;
         bool m_app_running = true;
     };
 }
