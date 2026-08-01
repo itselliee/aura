@@ -52,8 +52,9 @@ add_library(aura-core STATIC
         engine/src/internal_layer_stack.cpp
         engine/src/layer_stack.cpp
         engine/src/window.cpp
-        engine/src/renderer.cpp
+        engine/src/imgui_renderer.cpp
         engine/include/utility.h
+        engine/src/scene_renderer.cpp
 )
 
 ## -= Third-party =-
@@ -67,7 +68,7 @@ target_include_directories(aura-core PUBLIC engine/include)
 # --== Aura Editor Executable (This is our one, and it actually returns the results! WOOO!)
 add_executable(aura-editor
         editor/src/main.cpp
-        editor/ext-layers/editor-panels/performance_panel.h
+        editor/ext-layers/panels.h
         editor/utils/theme_imgui.h
 )
 

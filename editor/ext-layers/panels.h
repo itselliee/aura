@@ -8,13 +8,14 @@
 #include "imspinner_compat.h"
 #include "imspinner_shapes.h"
 #include "layer_stack.h"
-#include "../../utils/theme_imgui.h"
+#include "../utils/theme_imgui.h"
 
 namespace aura_editor {
-    class performance_panel : public aura_core::layer {
+    class panels : public aura_core::layer {
     public:
-        performance_panel(aura_core::app* app) {
+        panels(aura_core::app* app, aura_core::scene_renderer* renderer) {
             m_app = app;
+            m_renderer = renderer;
         }
 
         ImGuiIO& io = ImGui::GetIO();
@@ -39,6 +40,7 @@ namespace aura_editor {
 
             ImGui::ShowDebugLogWindow();
 
+            viewport_panel();
             perf_panel(framerate);
             menu_bar();
 
@@ -47,6 +49,7 @@ namespace aura_editor {
 
     private:
         aura_core::app* m_app;
+        aura_core::scene_renderer* m_renderer;
 
         void menu_bar() {
             if (ImGui::BeginMainMenuBar()) {
@@ -58,6 +61,34 @@ namespace aura_editor {
                 }
                 ImGui::EndMainMenuBar();
             }
+        }
+
+        void viewport_panel() {
+            ImGui::Begin("Viewport");
+
+            ImVec2 panel_size = ImGui::GetContentRegionAvail();
+            float target_aspect = 16.0f / 9.0f;
+            float panel_aspect = panel_size.x / panel_size.y;
+
+            ImVec2 image_size;
+            if (panel_aspect > target_aspect) {
+                image_size.y = panel_size.y;
+                image_size.x = image_size.y * target_aspect;
+            } else {
+                image_size.x = panel_size.x;
+                image_size.y = image_size.x / target_aspect;
+            }
+
+            ImVec2 cursor_pos = ImGui::GetCursorPos();
+            ImGui::SetCursorPos(ImVec2(
+                cursor_pos.x + (panel_size.x - image_size.x) * 0.5f,
+                cursor_pos.y + (panel_size.y - image_size.y) * 0.5f
+            ));
+
+            GLuint tex_id = m_renderer->m_color_texture;
+            ImGui::Image((ImTextureID)(intptr_t)tex_id, image_size, ImVec2(0, 1), ImVec2(1, 0));
+
+            ImGui::End();
         }
 
         void perf_panel(float framerate) {

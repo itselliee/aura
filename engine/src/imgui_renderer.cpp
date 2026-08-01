@@ -6,21 +6,19 @@
 #include <ostream>
 
 #include "../include/internal_layer_stack.h"
-#include <glad/glad.h>
 
-#include "utility.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
 namespace aura_core {
-    class renderer : public internal_layer {
+    class imgui_renderer : public internal_layer {
     public:
-        renderer(window *window) {
+        imgui_renderer(window *window) {
             m_window = window;
         }
 
         void on_attach() override {
-            std::cout << "render: pipeline online" << std::endl;
+            std::cout << "imgui_render: pipeline online" << std::endl;
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
             ImGuiIO& io = ImGui::GetIO();
@@ -34,8 +32,9 @@ namespace aura_core {
         }
 
         void gl_render_stg() override {
-            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
         void imgui_render_stg() override {

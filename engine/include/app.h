@@ -7,7 +7,8 @@
 #include "internal_layer_stack.h"
 #include "layer_stack.h"
 #include "window.h"
-#include "../src/renderer.cpp"
+#include "../src/imgui_renderer.cpp"
+#include "../src/scene_renderer.cpp"
 
 namespace aura_core {
     class app {
@@ -20,8 +21,13 @@ namespace aura_core {
         void push_layer(layer* layer) const;
 
         [[nodiscard]] window* get_window() const;
+
+        [[nodiscard]] scene_renderer *get_scene_renderer() const;
+
     private:
         window *m_window = nullptr;
+        scene_renderer *m_scene_renderer = nullptr;
+        imgui_renderer *m_imgui_renderer = nullptr;
         layer_stack *m_layerstack;
         internal_layer_stack *m_internal_layerstack;
         bool m_app_running = true;

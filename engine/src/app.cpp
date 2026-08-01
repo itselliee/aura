@@ -12,11 +12,16 @@ namespace aura_core {
         m_layerstack = new layer_stack();
         m_internal_layerstack = new internal_layer_stack();
 
-        auto *renderer = new aura_core::renderer(m_window);
+        m_imgui_renderer = new imgui_renderer(m_window);
+        m_scene_renderer = new scene_renderer();
         // Here, put the internal layer stack objects you require to be implemented.
-        m_internal_layerstack->push_layer(renderer);
+
+        m_internal_layerstack->push_layer(m_imgui_renderer);
+        m_internal_layerstack->push_layer(m_scene_renderer);
     }
     app::~app() {
+        delete m_imgui_renderer;
+        delete m_scene_renderer;
         delete m_internal_layerstack;
         delete m_layerstack;
         delete m_window;
@@ -71,4 +76,6 @@ namespace aura_core {
     }
 
     window *app::get_window() const { return m_window; }
+    scene_renderer *app::get_scene_renderer() const { return m_scene_renderer; }
+
 }
