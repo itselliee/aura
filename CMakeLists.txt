@@ -9,7 +9,6 @@ if(ENABLE_ASAN)
     add_link_options(-fsanitize=address,undefined)
 endif()
 
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

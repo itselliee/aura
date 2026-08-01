@@ -11,18 +11,21 @@ namespace aura_core {
     class scene_renderer : public internal_layer {
     public:
         scene_renderer() {}
-        ~scene_renderer() {}
 
-        const int width = 1920; // for viewport fbo
-        const int height = 1080; // for viewport fbo
+        ~scene_renderer() {
+            cleanup_opengl();
+        }
+
+        const int width = 1920;
+        const int height = 1080;
 
         GLuint m_framebuffer = 0;
-        GLuint m_color_texture;
-        GLuint m_depth_rbo;
+        GLuint m_color_texture = 0;
+        GLuint m_depth_rbo = 0;
 
         void on_attach() override {
             create_framebuffer();
-            std::cout << "ogl_render: intiialized successfully" << std::endl;
+            std::cout << "ogl_render: initialized successfully" << std::endl;
         }
 
         void create_framebuffer() {
@@ -58,6 +61,30 @@ namespace aura_core {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+
+        void on_detach() override {
+            cleanup_opengl();
+        }
+
+    private:
+        void cleanup_opengl() {
+            if (glfwGetCurrentContext() == nullptr) {
+                std::cout << "CRITICAL WARN: Context already destroyed! Skipping glDelete calls to avoid SIGSEGV." << std::endl;
+                return;
+            }
+            if (m_framebuffer != 0) {
+                glDeleteFramebuffers(1, &m_framebuffer);
+                m_framebuffer = 0;
+            }
+            if (m_color_texture != 0) {
+                glDeleteTextures(1, &m_color_texture);
+                m_color_texture = 0;
+            }
+            if (m_depth_rbo != 0) {
+                glDeleteRenderbuffers(1, &m_depth_rbo);
+                m_depth_rbo = 0;
+            }
         }
     };
 }

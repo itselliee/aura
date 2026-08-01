@@ -26,6 +26,11 @@ namespace aura_editor {
         static inline float displayedFPS = 0.0f;
         static inline float timer = 0.0f;
 
+        // panel disable-enable
+        static inline bool b_perf_panel = true;
+        static inline bool b_console_panel = true;
+        static inline bool b_viewport_panel = true;
+
         void on_attach() override {
             font = io.Fonts->AddFontFromFileTTF("editor_res/fonts/sfpro-med.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
         }
@@ -38,10 +43,9 @@ namespace aura_editor {
         void on_render() override {
             float framerate = io.Framerate;
 
-            ImGui::ShowDebugLogWindow();
-
-            viewport_panel();
-            perf_panel(framerate);
+            if (b_viewport_panel) { viewport_panel(); }
+            if (b_perf_panel) { perf_panel(framerate); }
+            if (b_console_panel) { ImGui::ShowDebugLogWindow(); }
             menu_bar();
 
             ImGui::PopFont();
@@ -56,6 +60,19 @@ namespace aura_editor {
                 if (ImGui::BeginMenu("File")) {
                     if (ImGui::MenuItem("Exit")) {
                         glfwSetWindowShouldClose(m_app->get_window()->get_window(), GLFW_TRUE);
+                    }
+                    ImGui::EndMenu();
+                }
+                if (ImGui::BeginMenu("View")) {
+                    if (ImGui::MenuItem("Viewport")) {
+                        b_viewport_panel = !b_viewport_panel;
+                    }
+                    ImGui::Spacing();
+                    if (ImGui::MenuItem("Performance Metrics")) {
+                        b_perf_panel = !b_perf_panel;
+                    }
+                    if (ImGui::MenuItem("Console")) {
+                        b_console_panel = !b_console_panel;
                     }
                     ImGui::EndMenu();
                 }

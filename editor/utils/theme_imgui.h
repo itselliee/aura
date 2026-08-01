@@ -10,8 +10,11 @@ namespace aura_editor {
     class imgui_themes {
     public:
         static void apply_theme() {
+
             ImGuiStyle &style = ImGui::GetStyle();
             style.WindowRounding = 8.0f;
+            style.TabRounding = 0.0f;
+            style.WindowMenuButtonPosition = ImGuiDir_None;
             style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.690f, 0.525f, 0.796f, 1.000f);
 
             style.Colors[ImGuiCol_WindowBg] = ImVec4(0.090f, 0.080f, 0.100f, 1.000f);

@@ -6,10 +6,11 @@
 
 namespace aura_core {
     internal_layer_stack::~internal_layer_stack() {
-        for (internal_layer* layer : m_layers) {
-            layer->on_detach();
-            delete layer;
+        for (auto it = m_layers.rbegin(); it != m_layers.rend(); ++it) {
+            (*it)->on_detach();
+            delete *it;
         }
+        m_layers.clear();
     }
 
     void internal_layer_stack::push_layer(internal_layer* layer) {

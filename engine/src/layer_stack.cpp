@@ -6,10 +6,11 @@
 
 namespace aura_core {
     layer_stack::~layer_stack() {
-        for (layer* layer : m_layers) {
-            layer->on_detach();
-            delete layer;
+        for (auto it = m_layers.rbegin(); it != m_layers.rend(); ++it) {
+            (*it)->on_detach();
+            delete *it;
         }
+        m_layers.clear();
     }
 
     void layer_stack::push_layer(layer* layer) {

@@ -14,14 +14,11 @@ namespace aura_core {
 
         m_imgui_renderer = new imgui_renderer(m_window);
         m_scene_renderer = new scene_renderer();
-        // Here, put the internal layer stack objects you require to be implemented.
 
         m_internal_layerstack->push_layer(m_imgui_renderer);
         m_internal_layerstack->push_layer(m_scene_renderer);
     }
     app::~app() {
-        delete m_imgui_renderer;
-        delete m_scene_renderer;
         delete m_internal_layerstack;
         delete m_layerstack;
         delete m_window;
