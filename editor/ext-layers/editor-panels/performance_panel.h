@@ -20,11 +20,13 @@ namespace aura_editor {
         ImGuiIO& io = ImGui::GetIO();
         ImFont* font{};
 
+        static inline bool vsync = false;
+
         static inline float displayedFPS = 0.0f;
         static inline float timer = 0.0f;
 
         void on_attach() override {
-            font = io.Fonts->AddFontFromFileTTF("editor_res/SF-Pro-Display-Medium.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
+            font = io.Fonts->AddFontFromFileTTF("editor_res/fonts/sfpro-med.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
         }
 
         void pre_render() override {
@@ -33,12 +35,11 @@ namespace aura_editor {
         }
 
         void on_render() override {
-            float framerate = aura_core::utility::get_fps();
-            static bool vsync = false;
+            float framerate = io.Framerate;
 
             ImGui::ShowDebugLogWindow();
 
-            perf_panel(vsync, framerate);
+            perf_panel(framerate);
             menu_bar();
 
             ImGui::PopFont();
@@ -59,7 +60,7 @@ namespace aura_editor {
             }
         }
 
-        void perf_panel(bool vsync, float framerate) {
+        void perf_panel(float framerate) {
             ImGui::Begin("Performance Graph", nullptr, 0);
 
             timer += ImGui::GetIO().DeltaTime;
