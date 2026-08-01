@@ -11,7 +11,9 @@ namespace aura_core {
     window::window(int width, int height) {
         std::cout << "window: creating window" << std::endl;
 
-        glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11); // keep this in, memory leak kills kids
+#ifdef IS_LINUX_PLATFORM
+        glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+#endif // keep this in, memory leak kills kids
 
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

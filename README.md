@@ -5,6 +5,9 @@
 [![Multi-OS builds](https://github.com/itselliee/aura/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/itselliee/aura/actions/workflows/cmake-multi-platform.yml)
 [![Human-Crafted Software](handcrafted-bronze.svg)](https://github.com/LeonardNJU/human-crafted-software) 
 
+> [!IMPORTANT]
+> This game engine is not ready for actual production.
+
 > [!WARNING]
 > GLFW when using Wayland has a severe memory leak, **PLEASE, DO NOT FORCE WAYLAND ON AURA OR YOU WILL GET A MEMORY LEAK!**
 

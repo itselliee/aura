@@ -61,6 +61,14 @@ target_include_directories(aura-core PUBLIC third-party/stb)
 target_include_directories(aura-core PRIVATE third-party/imgui)
 target_link_libraries(aura-core PRIVATE glfw glad)
 
+if(APPLE)
+    target_compile_definitions(aura-core PUBLIC IS_APPLE_PLATFORM)
+elseif(UNIX AND NOT APPLE)
+    target_compile_definitions(aura-core PUBLIC IS_LINUX_PLATFORM)
+elseif(WIN32)
+    target_compile_definitions(aura-core PUBLIC IS_WINDOWS_PLATFORM)
+endif()
+
 ## -= Our code =-
 target_include_directories(aura-core PUBLIC engine/include)
 

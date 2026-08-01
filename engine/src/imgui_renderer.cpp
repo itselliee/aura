@@ -18,7 +18,6 @@ namespace aura_core {
         }
 
         void on_attach() override {
-            std::cout << "imgui_render: pipeline online" << std::endl;
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
             ImGuiIO& io = ImGui::GetIO();
@@ -29,6 +28,7 @@ namespace aura_core {
             ImGui_ImplOpenGL3_Init("#version 330 core");
 
             ImGui::StyleColorsDark();
+            std::cout << "imgui_render: pipeline online" << std::endl;
         }
 
         void gl_render_stg() override {
