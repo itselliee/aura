@@ -4,6 +4,8 @@
 
 #include "app.h"
 
+#include "utility.h"
+
 namespace aura_core {
     app::app() {
         m_window = new window(1280, 720);
@@ -22,11 +24,25 @@ namespace aura_core {
 
     void app::run() {
         while (!m_window->should_close() && m_app_running) {
+            float currentFrame = static_cast<float>(glfwGetTime());
+            utility::deltaTime = currentFrame - utility::lastFrameTime;
+            utility::lastFrameTime = currentFrame;
+
+
+
             for (internal_layer* layer : *m_internal_layerstack) {
                 layer->on_update(1);
             }
 
+            for (layer* layer : *m_layerstack) {
+                layer->on_update(1);
+            }
+
             for (internal_layer* layer : *m_internal_layerstack) {
+                layer->pre_render();
+            }
+
+            for (layer* layer : *m_layerstack) {
                 layer->pre_render();
             }
 
@@ -48,6 +64,8 @@ namespace aura_core {
 
             m_window->refresh();
         }
+
+        delete this;
     }
 
     void app::push_layer(layer* layer) const {
@@ -55,6 +73,4 @@ namespace aura_core {
     }
 
     window *app::get_window() const { return m_window; }
-
-    // private
 }

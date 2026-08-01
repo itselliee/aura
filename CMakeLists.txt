@@ -28,10 +28,12 @@ add_library(imgui STATIC
         third-party/imgui/imgui_widgets.cpp
         third-party/imgui/backends/imgui_impl_glfw.cpp
         third-party/imgui/backends/imgui_impl_opengl3.cpp
+        third-party/imspinner/cimspinner.cpp
 )
 target_include_directories(imgui PUBLIC
         third-party/imgui
         third-party/imgui/backends
+        third-party/imspinner/
         third-party/glad/include # Need this for OGL render
 )
 target_link_libraries(imgui PUBLIC glfw)
@@ -44,6 +46,7 @@ add_library(aura-core STATIC
         engine/src/layer_stack.cpp
         engine/src/window.cpp
         engine/src/renderer.cpp
+        engine/include/utility.h
 )
 
 ## -= Third-party =-
@@ -58,6 +61,7 @@ target_include_directories(aura-core PUBLIC engine/include)
 add_executable(aura-editor
         editor/src/main.cpp
         editor/ext-layers/editor-panels/performance_panel.h
+        editor/utils/theme_imgui.h
 )
 
 target_include_directories(aura-editor PRIVATE editor/ext-layers)
@@ -69,8 +73,8 @@ target_link_libraries(aura-editor PRIVATE
 )
 
 # --== Post Setup ==--
-#add_custom_command(TARGET aura-editor POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        "${CMAKE_CURRENT_SOURCE_DIR}/editor/res"
-#        "$<TARGET_FILE_DIR:aura-editor>/res"
-#)
+add_custom_command(TARGET aura-editor POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/editor/editor_res"
+        "$<TARGET_FILE_DIR:aura-editor>/editor_res"
+)

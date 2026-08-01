@@ -8,6 +8,7 @@
 #include "../include/internal_layer_stack.h"
 #include <glad/glad.h>
 
+#include "utility.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
@@ -27,7 +28,7 @@ namespace aura_core {
             io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
             ImGui_ImplGlfw_InitForOpenGL(m_window->get_window(), true);
-            ImGui_ImplOpenGL3_Init();
+            ImGui_ImplOpenGL3_Init("#version 330 core");
 
             ImGui::StyleColorsDark();
         }

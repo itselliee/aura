@@ -8,7 +8,7 @@
 int main() {
     auto *app_proc = new aura_core::app();
 
-    app_proc->push_layer(new aura_editor::performance_panel());
+    app_proc->push_layer(new aura_editor::performance_panel(app_proc));
     app_proc->run();
 
     return 0;

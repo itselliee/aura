@@ -16,3 +16,12 @@ This is a full new experience for me, so expect bugs, once this is properly stab
 ### **MAC COMPILATION IS NOT RECOMMENDED - USE OUR [RELEASES](https://github.com/itselliee/aura/releases) IF YOU WANT A MACOS DISTRUBUTION!**
 
 I recommend using JetBrains CLion for compilation (especially on Windows), as it simplifies the process, but you can also use plain terminal to compile.
+
+
+|              |         aURA         |              Unity              |
+|:------------:|:--------------------:|:-------------------------------:|
+| Open Source  |     ✔       | **-** (dependent on price paid) |
+| C++ Support  |  ✔    |               ✔                |
+| Rust Support |   ✔   |               ✘                |
+|  C# Support  |  ✔   |               ✔                |
+| Lua Support  | ✔ |               ✘                |
