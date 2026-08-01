@@ -144,9 +144,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "nightly"
-          name: "Build ${{ steps.release_tag.outputs.tag }}"
+          name: "Nightly Release rotation"
           body: "Automated build generated from commit ${{ github.sha }} on `main`."
-          prerelease: true
+          prerelease: false
           files: ${{ env.ZIP_FILE }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
