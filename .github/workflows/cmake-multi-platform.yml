@@ -115,7 +115,7 @@ jobs:
           fi
           
           # Copy the resources folder alongside the executable
-          RESOURCES_SRC=$(find "$BUILD_DIR" -type d -name "resources" ! -path "*/CMakeFiles/*" | head -n 1)
+          RESOURCES_SRC=$(find "$BUILD_DIR" -type d -name "editor_res" ! -path "*/CMakeFiles/*" | head -n 1)
           if [ -n "$RESOURCES_SRC" ] && [ "$(ls -A "$RESOURCES_SRC" 2>/dev/null)" ]; then
             cp -r "$RESOURCES_SRC" dist/resources
           else
