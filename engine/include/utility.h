@@ -10,8 +10,6 @@ namespace aura_core {
     public:
         static inline float deltaTime = 0.0f;
         static inline float lastFrameTime = 0.0f;
-
-        static float get_fps() { return utility::deltaTime > 0.0f ? 1.0f / utility::deltaTime : 0.0f; }
     };
 }
 

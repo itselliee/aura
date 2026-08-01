@@ -3,6 +3,13 @@
 cmake_minimum_required(VERSION 3.20)
 project(aura)
 
+option(ENABLE_ASAN "Enable AddressSanitizer + LeakSanitizer" OFF)
+if(ENABLE_ASAN)
+    add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer -g)
+    add_link_options(-fsanitize=address,undefined)
+endif()
+
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

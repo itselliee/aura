@@ -17,9 +17,9 @@ namespace aura_core {
         m_internal_layerstack->push_layer(renderer);
     }
     app::~app() {
-        delete m_window;
         delete m_internal_layerstack;
         delete m_layerstack;
+        delete m_window;
     }
 
     void app::run() {
@@ -28,14 +28,12 @@ namespace aura_core {
             utility::deltaTime = currentFrame - utility::lastFrameTime;
             utility::lastFrameTime = currentFrame;
 
-
-
             for (internal_layer* layer : *m_internal_layerstack) {
-                layer->on_update(1);
+                layer->on_update(utility::deltaTime);
             }
 
             for (layer* layer : *m_layerstack) {
-                layer->on_update(1);
+                layer->on_update(utility::deltaTime);
             }
 
             for (internal_layer* layer : *m_internal_layerstack) {

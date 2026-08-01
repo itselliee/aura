@@ -37,7 +37,7 @@ namespace aura_editor {
         void on_render() override {
             float framerate = io.Framerate;
 
-            ImGui::ShowDebugLogWindow();
+            //ImGui::ShowDebugLogWindow();
 
             perf_panel(framerate);
             menu_bar();
