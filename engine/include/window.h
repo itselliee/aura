@@ -4,8 +4,10 @@
 
 #ifndef AURA_WINDOW_H
 #define AURA_WINDOW_H
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_hints.h>
 
 namespace aura_core {
     class window {
@@ -16,11 +18,15 @@ namespace aura_core {
         void refresh() const;
         bool should_close() const;
 
-        GLFWwindow *get_window() const;
-    private:
-        GLFWwindow* glfw_window = nullptr;
+        SDL_Window *get_window() const;
 
-        static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+        void set_should_close(bool close) { m_should_close = close; }
+
+    private:
+        SDL_Window* m_window = nullptr;
+        SDL_GLContext m_gl_context = nullptr;
+
+        bool m_should_close = false;
     };
 }
 

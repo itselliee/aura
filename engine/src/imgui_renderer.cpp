@@ -7,7 +7,7 @@
 
 #include "../include/internal_layer_stack.h"
 
-#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_opengl3.h"
 
 namespace aura_core {
@@ -24,7 +24,7 @@ namespace aura_core {
 
             io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-            ImGui_ImplGlfw_InitForOpenGL(m_window->get_window(), true);
+            ImGui_ImplSDL3_InitForOpenGL(m_window->get_window(), SDL_GL_GetCurrentContext());
             ImGui_ImplOpenGL3_Init("#version 330 core");
 
             ImGui::StyleColorsDark();
@@ -39,7 +39,7 @@ namespace aura_core {
 
         void imgui_render_stg() override {
             ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
+            ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
 
             ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
@@ -52,7 +52,7 @@ namespace aura_core {
 
         void on_detach() override {
             ImGui_ImplOpenGL3_Shutdown();
-            ImGui_ImplGlfw_Shutdown();
+            ImGui_ImplSDL3_Shutdown();
             ImGui::DestroyContext();
             std::cout << "render: pipeline shutdown safely" << std::endl;
         }

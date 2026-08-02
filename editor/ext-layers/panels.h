@@ -59,7 +59,7 @@ namespace aura_editor {
             if (ImGui::BeginMainMenuBar()) {
                 if (ImGui::BeginMenu("File")) {
                     if (ImGui::MenuItem("Exit")) {
-                        glfwSetWindowShouldClose(m_app->get_window()->get_window(), GLFW_TRUE);
+                        m_app->get_window()->set_should_close(true);
                     }
                     ImGui::EndMenu();
                 }
@@ -121,7 +121,7 @@ namespace aura_editor {
             ImGui::Text("FPS: %.2f", displayedFPS);
 
             if (ImGui::Checkbox("VSync", &vsync)) {
-                glfwSwapInterval(vsync ? 1 : 0);
+                SDL_GL_SetSwapInterval(vsync ? 1 : 0);
             }
             ImGui::End();
         }

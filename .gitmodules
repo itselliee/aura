@@ -8,3 +8,12 @@
 [submodule "thirdparty"]
 	path = thirdparty
 	url = https://github.com/dalerank/imspinner.git
+[submodule "third-party/yaml-cpp"]
+	path = third-party/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "third-party/glm"]
+	path = third-party/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "third-party/SDL"]
+	path = third-party/SDL
+	url = https://github.com/libsdl-org/SDL.git

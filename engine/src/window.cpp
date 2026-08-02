@@ -12,35 +12,47 @@ namespace aura_core {
         std::cout << "window: creating window" << std::endl;
 
 #ifdef IS_LINUX_PLATFORM
-        glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+        SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "x11");
 #endif // keep this in, memory leak kills kids
 
-        glfwInit();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#if IS_APPLE_PLATFORM
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-        glfw_window = glfwCreateWindow(width, height, "aURA", nullptr, nullptr);
-
-        if (glfw_window == nullptr) {
-            std::cerr << "window: failed to create GLFW window, aborting" << std::endl;
-            glfwTerminate();
+        if (!SDL_Init(SDL_INIT_VIDEO)) {
+            std::cerr << "window: failed to initialize SDL, aborting" << std::endl;
             return;
         }
 
-        glfwMakeContextCurrent(glfw_window);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+#ifdef IS_APPLE_PLATFORM
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+#endif
+
+        // Created using SDL3 syntax and pixel density flags
+        m_window = SDL_CreateWindow("Aura", width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+
+        if (m_window == nullptr) {
+            std::cerr << "window: failed to create SDL window, aborting" << std::endl;
+            SDL_Quit();
+            return;
+        }
+
+        // Create the native context handle
+        m_gl_context = SDL_GL_CreateContext(m_window);
+        if (m_gl_context == nullptr) {
+            std::cerr << "window: failed to create GL context, aborting" << std::endl;
+            SDL_DestroyWindow(m_window);
+            SDL_Quit();
+            return;
+        }
+
+        // Initialize GLAD using SDL3's proc address locator
+        if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
             std::cerr << "window: glad init failed, aborting" << std::endl;
             return;
         }
 
-        glfwSetFramebufferSizeCallback(glfw_window, framebuffer_size_callback);
-        glfwSwapInterval(0);
+        SDL_GL_SetSwapInterval(0);
 
         std::cout << "window: initialized successfully" << std::endl;
 
@@ -49,24 +61,24 @@ namespace aura_core {
 
     window::~window() {
         std::cout << "window: destroying window" << std::endl;
-        if (glfw_window) glfwDestroyWindow(glfw_window);
-        glfwTerminate();
+        if (m_gl_context) {
+            SDL_GL_DestroyContext(m_gl_context);
+        }
+        if (m_window) {
+            SDL_DestroyWindow(m_window);
+        }
+        SDL_Quit();
     }
 
     void window::refresh() const {
-        glfwPollEvents();
-        glfwSwapBuffers(glfw_window);
+        SDL_GL_SwapWindow(m_window);
     }
 
     bool window::should_close() const {
-        return glfwWindowShouldClose(glfw_window);
+        return m_should_close;
     }
 
-    GLFWwindow* window::get_window() const {
-        return glfw_window;
-    }
-
-    void window::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-        glViewport(0, 0, width, height);
+    SDL_Window* window::get_window() const {
+        return m_window;
     }
 }

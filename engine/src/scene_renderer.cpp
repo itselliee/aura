@@ -6,6 +6,7 @@
 #include <ostream>
 
 #include "internal_layer_stack.h"
+#include <SDL3/SDL.h>
 
 namespace aura_core {
     class scene_renderer : public internal_layer {
@@ -22,6 +23,15 @@ namespace aura_core {
         GLuint m_framebuffer = 0;
         GLuint m_color_texture = 0;
         GLuint m_depth_rbo = 0;
+
+        GLuint vbo;
+
+        // temp
+        static inline float vertices[] = {
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.5f,  0.5f, 0.0f,
+        };
 
         void on_attach() override {
             create_framebuffer();
@@ -60,6 +70,11 @@ namespace aura_core {
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            // render here ellie
+            glGenBuffers(1, &vbo);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
@@ -69,7 +84,8 @@ namespace aura_core {
 
     private:
         void cleanup_opengl() {
-            if (glfwGetCurrentContext() == nullptr) {
+
+            if (SDL_GL_GetCurrentContext() == nullptr) {
                 std::cout << "CRITICAL WARN: Context already destroyed! Skipping glDelete calls to avoid SIGSEGV." << std::endl;
                 return;
             }

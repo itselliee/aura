@@ -5,6 +5,7 @@
 #include "app.h"
 
 #include "utility.h"
+#include "backends/imgui_impl_sdl3.h"
 
 namespace aura_core {
     app::app() {
@@ -26,7 +27,28 @@ namespace aura_core {
 
     void app::run() {
         while (!m_window->should_close() && m_app_running) {
-            float currentFrame = static_cast<float>(glfwGetTime());
+            SDL_Event event;
+            while (SDL_PollEvent(&event)) {
+                ImGui_ImplSDL3_ProcessEvent(&event);
+
+                switch (event.type) {
+                    case SDL_EVENT_QUIT:
+                        m_window->set_should_close(true);
+                        break;
+                    case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+                        if (event.window.windowID == SDL_GetWindowID(m_window->get_window())) {
+                            m_window->set_should_close(true);
+                        }
+                        break;
+                    case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+                        if (event.window.windowID == SDL_GetWindowID(m_window->get_window())) {
+                            glViewport(0, 0, event.window.data1, event.window.data2);
+                        }
+                        break;
+                }
+            }
+
+            float currentFrame = static_cast<float>((double)SDL_GetTicks() / 1000.0);
             utility::deltaTime = currentFrame - utility::lastFrameTime;
             utility::lastFrameTime = currentFrame;
 

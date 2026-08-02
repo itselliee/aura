@@ -1,5 +1,3 @@
-# Comments are littered around in this purely for organization, I cant read it properly without them.
-
 cmake_minimum_required(VERSION 3.20)
 project(aura)
 
@@ -12,12 +10,20 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# --== GLFW Environmental Variables ==--
+# --== SDL3 Environmental Variables ==--
 
-set(GLFW_BUILD_DOCS OFF CACHE INTERNAL "")
-set(GLFW_BUILD_TESTS OFF CACHE INTERNAL "")
-set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "")
-add_subdirectory(third-party/glfw)
+# Force the built binaries into the executable folder automatically.
+# This prevents you from needing manual copy scripts for the SDL3 shared library.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+
+set(SDL_TESTS OFF CACHE INTERNAL "")
+set(SDL_EXAMPLES OFF CACHE INTERNAL "")
+set(SDL_DOCS OFF CACHE INTERNAL "")
+add_subdirectory(third-party/sdl EXCLUDE_FROM_ALL)
+
+# --== Yaml-CPP Lib == --
+add_subdirectory(third-party/yaml-cpp)
 
 # --== GLAD Library ==--
 
@@ -32,7 +38,7 @@ add_library(imgui STATIC
         third-party/imgui/imgui_draw.cpp
         third-party/imgui/imgui_tables.cpp
         third-party/imgui/imgui_widgets.cpp
-        third-party/imgui/backends/imgui_impl_glfw.cpp
+        third-party/imgui/backends/imgui_impl_sdl3.cpp # SWAPPED: GLFW -> SDL3 backend
         third-party/imgui/backends/imgui_impl_opengl3.cpp
         third-party/imspinner/cimspinner.cpp
 )
@@ -42,7 +48,7 @@ target_include_directories(imgui PUBLIC
         third-party/imspinner/
         third-party/glad/include # Need this for OGL render
 )
-target_link_libraries(imgui PUBLIC glfw)
+target_link_libraries(imgui PUBLIC SDL3::SDL3) # SWAPPED: Links to SDL3 target now
 
 # --== Aura Engine Library (Hey! This is our one!) ==--
 add_library(aura-core STATIC
@@ -54,12 +60,16 @@ add_library(aura-core STATIC
         engine/src/imgui_renderer.cpp
         engine/include/utility.h
         engine/src/scene_renderer.cpp
+        engine/include/scene-handler.h
+        engine/src/shader_reader.cpp
+        engine/include/shader_reader.h
 )
 
 ## -= Third-party =-
 target_include_directories(aura-core PUBLIC third-party/stb)
 target_include_directories(aura-core PRIVATE third-party/imgui)
-target_link_libraries(aura-core PRIVATE glfw glad)
+target_include_directories(aura-core PUBLIC third-party/glm)
+target_link_libraries(aura-core PRIVATE SDL3::SDL3 glad) # SWAPPED: Swapped glfw for SDL3
 
 if(APPLE)
     target_compile_definitions(aura-core PUBLIC IS_APPLE_PLATFORM)
@@ -77,6 +87,9 @@ add_executable(aura-editor
         editor/src/main.cpp
         editor/ext-layers/panels.h
         editor/utils/theme_imgui.h
+        editor/utils/yaml_to_scene_parser.cpp
+        editor/utils/yaml_to_scene_parser.h
+        editor/utils/render-triangle.cpp
 )
 
 target_include_directories(aura-editor PRIVATE editor/ext-layers)
@@ -85,6 +98,7 @@ target_link_libraries(aura-editor PRIVATE
         aura-core
         imgui
         glad
+        yaml-cpp
 )
 
 # --== Post Setup ==--
