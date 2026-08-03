@@ -6,7 +6,7 @@
 [![Human-Crafted Software](handcrafted-bronze.svg)](https://github.com/LeonardNJU/human-crafted-software) 
 
 > [!IMPORTANT]
-> This game engine is not ready for actual production.
+> This is a **engine** not a game **editor**, look for the official engine [here](https://github.com/itselliee/aura-editor).
 
 This is a full new experience for me, so expect bugs, once this is properly stable on OGL, I'm moving this to Vulkan!
 <br>This software is entirely written by humans, no AI LLM has touched this code. **EVER.**
