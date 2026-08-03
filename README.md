@@ -8,17 +8,14 @@
 > [!IMPORTANT]
 > This game engine is not ready for actual production.
 
-> [!WARNING]
-> GLFW when using Wayland has a severe memory leak, **PLEASE, DO NOT FORCE WAYLAND ON AURA OR YOU WILL GET A MEMORY LEAK!**
-
 This is a full new experience for me, so expect bugs, once this is properly stable on OGL, I'm moving this to Vulkan!
 <br>This software is entirely written by humans, no AI LLM has touched this code. **EVER.**
 
-## To compile, you will need to have:
-- A OpenGL capable GPU (above specification 3.3)
-- A CPU with at least 6 threads
-- Preferably Linux, but Windows is also good.
+# Compilation 
 
-### **MAC COMPILATION IS NOT RECOMMENDED - USE OUR [RELEASES](https://github.com/itselliee/aura/releases) IF YOU WANT A MACOS DISTRUBUTION!**
+This is coming soon.
 
-I recommend using JetBrains CLion for compilation (especially on Windows), as it simplifies the process, but you can also use plain terminal to compile.
+## Currently, this is what you need to compile:
+- OpenGL capable GPU above specification 3.3
+- CPU with at least 4 threads
+- Preferably Linux or MacOS.
