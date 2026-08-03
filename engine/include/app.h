@@ -7,8 +7,8 @@
 #include "internal_layer_stack.h"
 #include "layer_stack.h"
 #include "window.h"
-#include "../src/imgui_renderer.cpp"
-#include "../src/scene_renderer.cpp"
+#include "scene_renderer.h"
+#include "imgui_renderer.h"
 
 namespace aura_core {
     class app {

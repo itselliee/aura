@@ -12,15 +12,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # --== SDL3 Environmental Variables ==--
 
-# Force the built binaries into the executable folder automatically.
-# This prevents you from needing manual copy scripts for the SDL3 shared library.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 set(SDL_TESTS OFF CACHE INTERNAL "")
 set(SDL_EXAMPLES OFF CACHE INTERNAL "")
 set(SDL_DOCS OFF CACHE INTERNAL "")
-add_subdirectory(third-party/sdl EXCLUDE_FROM_ALL)
+add_subdirectory(third-party/SDL EXCLUDE_FROM_ALL)
 
 # --== Yaml-CPP Lib == --
 add_subdirectory(third-party/yaml-cpp)
@@ -38,7 +36,7 @@ add_library(imgui STATIC
         third-party/imgui/imgui_draw.cpp
         third-party/imgui/imgui_tables.cpp
         third-party/imgui/imgui_widgets.cpp
-        third-party/imgui/backends/imgui_impl_sdl3.cpp # SWAPPED: GLFW -> SDL3 backend
+        third-party/imgui/backends/imgui_impl_sdl3.cpp
         third-party/imgui/backends/imgui_impl_opengl3.cpp
         third-party/imspinner/cimspinner.cpp
 )
@@ -48,7 +46,7 @@ target_include_directories(imgui PUBLIC
         third-party/imspinner/
         third-party/glad/include # Need this for OGL render
 )
-target_link_libraries(imgui PUBLIC SDL3::SDL3) # SWAPPED: Links to SDL3 target now
+target_link_libraries(imgui PUBLIC SDL3::SDL3)
 
 # --== Aura Engine Library (Hey! This is our one!) ==--
 add_library(aura-core STATIC
@@ -58,11 +56,7 @@ add_library(aura-core STATIC
         engine/src/layer_stack.cpp
         engine/src/window.cpp
         engine/src/imgui_renderer.cpp
-        engine/include/utility.h
         engine/src/scene_renderer.cpp
-        engine/include/scene-handler.h
-        engine/src/shader_reader.cpp
-        engine/include/shader_reader.h
 )
 
 ## -= Third-party =-
