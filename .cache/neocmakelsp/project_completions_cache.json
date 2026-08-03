@@ -1,6 +1,20 @@
 {
-  "date": "2026-08-03T14:34:43.457476+01:00",
+  "date": "2026-08-03T20:26:52.173661467+01:00",
   "data": {
+    "/Users/ellie/projects/aura/CMakeLists.txt": [
+      {
+        "label": "CMAKE_CXX_STANDARD",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt"
+      },
+      {
+        "label": "CMAKE_CXX_STANDARD_REQUIRED",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt"
+      }
+    ],
     "/Users/ellie/projects/aura/CMakeLists.txt.old": [
       {
         "label": "CMAKE_CXX_STANDARD",
@@ -31,20 +45,6 @@
         "kind": 12,
         "detail": "Value",
         "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old"
-      }
-    ],
-    "/Users/ellie/projects/aura/CMakeLists.txt": [
-      {
-        "label": "CMAKE_CXX_STANDARD",
-        "kind": 12,
-        "detail": "Value",
-        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt"
-      },
-      {
-        "label": "CMAKE_CXX_STANDARD_REQUIRED",
-        "kind": 12,
-        "detail": "Value",
-        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt"
       }
     ]
   }

@@ -1,6 +1,74 @@
 {
-  "date": "2026-08-03T14:34:43.457639+01:00",
+  "date": "2026-08-03T20:26:52.173698987+01:00",
   "data": {
+    "ENABLE_ASAN": {
+      "location": {
+        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
+        "range": {
+          "start": {
+            "line": 3,
+            "character": 7
+          },
+          "end": {
+            "line": 3,
+            "character": 18
+          }
+        }
+      },
+      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt",
+      "is_function": false
+    },
+    "GLFW_BUILD_DOCS": {
+      "location": {
+        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt.old",
+        "range": {
+          "start": {
+            "line": 6,
+            "character": 4
+          },
+          "end": {
+            "line": 6,
+            "character": 19
+          }
+        }
+      },
+      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old",
+      "is_function": false
+    },
+    "SDL_TESTS": {
+      "location": {
+        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
+        "range": {
+          "start": {
+            "line": 10,
+            "character": 4
+          },
+          "end": {
+            "line": 10,
+            "character": 13
+          }
+        }
+      },
+      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt",
+      "is_function": false
+    },
+    "GLFW_BUILD_EXAMPLES": {
+      "location": {
+        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt.old",
+        "range": {
+          "start": {
+            "line": 8,
+            "character": 4
+          },
+          "end": {
+            "line": 8,
+            "character": 23
+          }
+        }
+      },
+      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old",
+      "is_function": false
+    },
     "SDL_STATIC": {
       "location": {
         "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
@@ -35,6 +103,40 @@
       "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt\n\n--== Simple DirectMedia Layer 3 || Setup ==-- #",
       "is_function": false
     },
+    "GLFW_BUILD_TESTS": {
+      "location": {
+        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt.old",
+        "range": {
+          "start": {
+            "line": 7,
+            "character": 4
+          },
+          "end": {
+            "line": 7,
+            "character": 20
+          }
+        }
+      },
+      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old",
+      "is_function": false
+    },
+    "CMAKE_CXX_STANDARD_REQUIRED": {
+      "location": {
+        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
+        "range": {
+          "start": {
+            "line": 4,
+            "character": 4
+          },
+          "end": {
+            "line": 4,
+            "character": 31
+          }
+        }
+      },
+      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt",
+      "is_function": false
+    },
     "SDL_DOCS": {
       "location": {
         "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
@@ -46,23 +148,6 @@
           "end": {
             "line": 12,
             "character": 12
-          }
-        }
-      },
-      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt",
-      "is_function": false
-    },
-    "SDL_TESTS": {
-      "location": {
-        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
-        "range": {
-          "start": {
-            "line": 10,
-            "character": 4
-          },
-          "end": {
-            "line": 10,
-            "character": 13
           }
         }
       },
@@ -86,74 +171,6 @@
       "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt",
       "is_function": false
     },
-    "GLFW_BUILD_EXAMPLES": {
-      "location": {
-        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt.old",
-        "range": {
-          "start": {
-            "line": 8,
-            "character": 4
-          },
-          "end": {
-            "line": 8,
-            "character": 23
-          }
-        }
-      },
-      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old",
-      "is_function": false
-    },
-    "GLFW_BUILD_DOCS": {
-      "location": {
-        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt.old",
-        "range": {
-          "start": {
-            "line": 6,
-            "character": 4
-          },
-          "end": {
-            "line": 6,
-            "character": 19
-          }
-        }
-      },
-      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old",
-      "is_function": false
-    },
-    "ENABLE_ASAN": {
-      "location": {
-        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
-        "range": {
-          "start": {
-            "line": 3,
-            "character": 7
-          },
-          "end": {
-            "line": 3,
-            "character": 18
-          }
-        }
-      },
-      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt",
-      "is_function": false
-    },
-    "GLFW_BUILD_TESTS": {
-      "location": {
-        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt.old",
-        "range": {
-          "start": {
-            "line": 7,
-            "character": 4
-          },
-          "end": {
-            "line": 7,
-            "character": 20
-          }
-        }
-      },
-      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old",
-      "is_function": false
-    },
     "CMAKE_CXX_STANDARD": {
       "location": {
         "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
@@ -165,23 +182,6 @@
           "end": {
             "line": 3,
             "character": 22
-          }
-        }
-      },
-      "document_info": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt",
-      "is_function": false
-    },
-    "CMAKE_CXX_STANDARD_REQUIRED": {
-      "location": {
-        "uri": "file:///Users/ellie/projects/aura/CMakeLists.txt",
-        "range": {
-          "start": {
-            "line": 4,
-            "character": 4
-          },
-          "end": {
-            "line": 4,
-            "character": 31
           }
         }
       },
