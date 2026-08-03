@@ -17,3 +17,12 @@
 [submodule "third-party/SDL"]
 	path = third-party/SDL
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "external-libs/sdl"]
+	path = external-libs/sdl
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "external-libs/imgui"]
+	path = external-libs/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "aura-libs/aura-glad"]
+	path = aura-libs/aura-glad
+	url = https://github.com/itselliee/aura-glad.git
