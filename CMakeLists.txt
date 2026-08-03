@@ -91,11 +91,15 @@ add_executable(aura-editor
 
 target_include_directories(aura-editor PRIVATE editor/ext-layers)
 
+find_package(Threads REQUIRED)
+
 target_link_libraries(aura-editor PRIVATE
         aura-core
         imgui
         glad
         yaml-cpp
+        Threads::Threads
+        ${CMAKE_DL_LIBS}
 )
 
 # --== Post Setup ==--
