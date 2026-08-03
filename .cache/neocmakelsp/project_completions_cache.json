@@ -1,0 +1,51 @@
+{
+  "date": "2026-08-03T14:34:43.457476+01:00",
+  "data": {
+    "/Users/ellie/projects/aura/CMakeLists.txt.old": [
+      {
+        "label": "CMAKE_CXX_STANDARD",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old"
+      },
+      {
+        "label": "CMAKE_CXX_STANDARD_REQUIRED",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old"
+      },
+      {
+        "label": "GLFW_BUILD_DOCS",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old"
+      },
+      {
+        "label": "GLFW_BUILD_TESTS",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old"
+      },
+      {
+        "label": "GLFW_BUILD_EXAMPLES",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt.old"
+      }
+    ],
+    "/Users/ellie/projects/aura/CMakeLists.txt": [
+      {
+        "label": "CMAKE_CXX_STANDARD",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt"
+      },
+      {
+        "label": "CMAKE_CXX_STANDARD_REQUIRED",
+        "kind": 12,
+        "detail": "Value",
+        "documentation": "defined variable\nfrom: /Users/ellie/projects/aura/CMakeLists.txt"
+      }
+    ]
+  }
+}
