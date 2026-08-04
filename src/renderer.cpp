@@ -41,4 +41,25 @@ void Renderer::Render() {
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+void Renderer::CleanupContext() {
+  // make sure you check if your windowing system's context is checked before
+  // you call this. SDL3 example: if (SDL_GL_GetCurrentContext() == nullptr) {
+  //   std::cout << "oh nooo" << std::endl;
+  //   return;
+  // }
+
+  if (m_Framebuffer != 0) {
+    glDeleteFramebuffers(1, &m_Framebuffer);
+    m_Framebuffer = 0;
+  }
+  if (m_ColorTexture != 0) {
+    glDeleteTextures(1, &m_ColorTexture);
+    m_Framebuffer = 0;
+  }
+  if (m_DepthRBO != 0) {
+    glDeleteRenderbuffers(1, &m_DepthRBO);
+    m_Framebuffer = 0;
+  }
+}
 } // namespace AuraEngine
