@@ -1,6 +1,14 @@
 #include <renderer.hpp>
 
 namespace AuraEngine {
+Renderer::Renderer() {
+  // let me compile
+}
+
+Renderer::~Renderer() {
+  // let me compile
+}
+
 void Renderer::CreateFramebuffer() {
   glGenFramebuffers(1, &m_Framebuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
