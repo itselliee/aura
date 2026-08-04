@@ -1,6 +1,12 @@
+#include <glad/glad.h>
+#include <iostream>
+
 namespace AuraEngine {
 class Renderer {
 public:
+  Renderer();
+  ~Renderer();
+
   static Renderer &Get() {
     static Renderer instance;
     return instance;
@@ -16,7 +22,13 @@ public:
   void PostRender();
 
 private:
-  Renderer();
-  ~Renderer();
+  const int width = 1920;
+  const int height = 1080;
+
+  GLuint m_Framebuffer = 0;
+  GLuint m_ColorTexture = 0;
+  GLuint m_DepthRBO = 0;
+
+  GLuint vbo = 0;
 };
 } // namespace AuraEngine

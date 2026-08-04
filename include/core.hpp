@@ -1,3 +1,5 @@
+#include <renderer.hpp>
+
 namespace AuraEngine {
 class Core {
 public:
@@ -6,5 +8,7 @@ public:
 
   void Init();
   void Update(); // call this every frame in your editor
+private:
+  Renderer *m_renderer;
 };
 } // namespace AuraEngine
