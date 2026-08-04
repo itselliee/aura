@@ -17,6 +17,8 @@ public:
 
   void CreateFramebuffer();
 
+  void InitializeRenderBuffer();
+
   void PreRender();
   void Render();
   void PostRender();
@@ -31,6 +33,8 @@ private:
   GLuint m_ColorTexture = 0;
   GLuint m_DepthRBO = 0;
 
-  GLuint vbo = 0;
+  GLuint VBO = 0;
+  GLuint VAO = 0;
+  GLuint EBO = 0;
 };
 } // namespace AuraEngine

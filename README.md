@@ -1,20 +1,12 @@
 <img src="logo.png" alt="logo" width="300"/>
 
-## Small little OpenGL game engine! (And game editor!)
+## Small little OpenGL game engine
 
-[![Human-Crafted Software](handcrafted-bronze.svg)](https://github.com/LeonardNJU/human-crafted-software) 
+[![Human-Crafted Software](handcrafted-bronze.svg)](https://github.com/LeonardNJU/human-crafted-software)
 
 > [!IMPORTANT]
 > This is a **engine** not a game **editor**, look for the official editor [here](https://github.com/itselliee/aura-editor).
 
-This is a full new experience for me, so expect bugs, once this is properly stable on OGL, I'm moving this to Vulkan!
-<br>This software is entirely written by humans, no AI LLM has touched this code. **EVER.**
+This is a full new experience for me, so expect bugs, once this is properly stable on OGL, I'm moving the rendering system to Vulkan!
 
-# Compilation 
-
-This is coming soon.
-
-## Currently, this is what you need to compile:
-- OpenGL capable GPU above specification 3.3
-- CPU with at least 4 threads
-- Preferably Linux or MacOS.
+More coming soon.
